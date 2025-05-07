@@ -13,7 +13,7 @@ function Navbar({ isAuthenticated, setAuth }) {
         setUserName(`${user.First_Name} ${user.Last_Name}`)
       }
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated, localStorage.getItem('user')])
 
   const handleLogout = () => {
     localStorage.clear()
@@ -55,7 +55,7 @@ function Navbar({ isAuthenticated, setAuth }) {
               </button>
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg py-2">
-                  <Link to="/user-management" className="block px-4 py-2 hover:bg-gray-100">จัดการผู้ใช้</Link>
+                  <Link to="/edit-user" className="block px-4 py-2 hover:bg-gray-100">แก้ไขข้อมูลผู้ใช้</Link>
                   <Link to="/booking" className="block px-4 py-2 hover:bg-gray-100">Booking</Link>
                   <Link to="/stay-details" className="block px-4 py-2 hover:bg-gray-100">รายละเอียดการเข้าพัก</Link>
                   <button

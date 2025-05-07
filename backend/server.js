@@ -5,6 +5,7 @@ require('dotenv').config()
 const pool = require('./config/connection')
 const setupDatabase = require('./config/setupDatabase')
 const authRoutes = require('./router/auth')
+const userRoutes = require('./router/user')
 
 const app = express()
 
@@ -39,3 +40,4 @@ setupDatabase()
 
 //Routes 
 app.use('/api/auth',authRoutes)
+app.use('/api/user', userRoutes)

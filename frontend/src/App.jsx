@@ -7,6 +7,7 @@ import SignUp from './pages/SignUp'
 import PublicRoute from './components/PublicRoute'
 import Dashboard from './pages/Dashboard'
 import ProtectedRoute from './components/ProtectedRoute'
+import EditUser from './pages/EditUser'
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route path="/signin" element={ <PublicRoute> <SignIn setAuth={setAuth}/> </PublicRoute> }/>
           <Route path="/signup" element={ <PublicRoute> <SignUp/> </PublicRoute> }/>
           <Route path="/dashboard" element={ <ProtectedRoute> <Dashboard /> </ProtectedRoute> }/>
+          <Route path="/edit-user" element={ <ProtectedRoute> <EditUser setAuth={setAuth} /> </ProtectedRoute> }/>
         </Routes>
       </div>
     </Router>
