@@ -1,7 +1,17 @@
 const pool = require('./connection')
+const bcrypt = require('bcrypt')
 
 async function setupDatabase() {
     const tables = [
+        {
+            name: 'Admin',
+            sql: `
+            CREATE TABLE IF NOT EXISTS Admin (
+                Admin_ID INT AUTO_INCREMENT PRIMARY KEY,
+                username VARCHAR(50) UNIQUE NOT NULL,
+                password VARCHAR(255) NOT NULL
+            )`
+        },
         {
             name: 'Tenant',
             sql: `
@@ -29,14 +39,33 @@ async function setupDatabase() {
             )`
         },
         {
+            name: 'Dormitory',
+                sql: `
+                CREATE TABLE IF NOT EXISTS Dormitory (
+                    Dormitory_ID CHAR(1) PRIMARY KEY,
+                    Name VARCHAR(20),
+                    Location VARCHAR(255),
+                    Floor INT NOT NULL,
+                    RoomsPerFloor INT NOT NULL,
+                    Electric_bill INT CHECK (Electric_bill BETWEEN 0 AND 9),
+                    Water_bill INT CHECK (Water_bill BETWEEN 0 AND 999)
+            )`
+        },
+        {
             name: 'Room',
             sql: `
             CREATE TABLE IF NOT EXISTS Room (
-                Room_ID INT AUTO_INCREMENT PRIMARY KEY,
-                room_number VARCHAR(10),
+                Room_ID VARCHAR(10) PRIMARY KEY,
+                room_number INT,
+                Room_type VARCHAR(10),
                 status ENUM('available', 'booked', 'rented') DEFAULT 'available',
                 Tenant_ID INT,
-                FOREIGN KEY (Tenant_ID) REFERENCES Tenant(Tenant_ID)
+                Dormitory_ID CHAR(1),
+                Floor INT NOT NULL,
+                Cost INT NOT NULL,
+                Furniture VARCHAR(20),
+                FOREIGN KEY (Tenant_ID) REFERENCES Tenant(Tenant_ID),
+                FOREIGN KEY (Dormitory_ID) REFERENCES Dormitory(Dormitory_ID)
             )`
         },
         {
@@ -45,7 +74,7 @@ async function setupDatabase() {
             CREATE TABLE IF NOT EXISTS Lease (
                 Lease_ID INT AUTO_INCREMENT PRIMARY KEY,
                 Tenant_ID INT,
-                Room_ID INT,
+                Room_ID VARCHAR(10),
                 start_date DATE,
                 end_date DATE,
                 monthly_rent DECIMAL(10, 2),
@@ -89,7 +118,7 @@ async function setupDatabase() {
             CREATE TABLE IF NOT EXISTS Booking (
                 Booking_ID INT AUTO_INCREMENT PRIMARY KEY,
                 Tenant_ID INT,
-                Room_ID INT,
+                Room_ID VARCHAR(10),
                 check_in_date DATE,
                 check_out_date DATE,
                 booking_status ENUM('pending', 'confirmed', 'cancelled', 'completed') DEFAULT 'pending',
@@ -114,7 +143,7 @@ async function setupDatabase() {
             CREATE TABLE IF NOT EXISTS Maintenance (
                 Maintenance_ID INT AUTO_INCREMENT PRIMARY KEY,
                 Employee_ID INT,
-                Room_ID INT,
+                Room_ID VARCHAR(10),
                 cost DECIMAL(10, 2),
                 maintenance_date DATE,
                 description TEXT,
@@ -134,12 +163,12 @@ async function setupDatabase() {
             name: 'Furniture_Set',
             sql: `
             CREATE TABLE IF NOT EXISTS Furniture_Set (
-                Room_ID INT,
+                Room_ID VARCHAR(10),
                 furniture_ID INT,
                 quantity INT,
                 PRIMARY KEY (Room_ID, furniture_ID),
                 FOREIGN KEY (Room_ID) REFERENCES Room(Room_ID),
-                FOREIGN KEY (furniture_ID) REFERENCES Furniture(furniture_ID)
+                FOREIGN KEY (furniture_ID) REFERENCES Furniture(Furniture_ID)
             )`
         }
     ]
@@ -151,6 +180,18 @@ async function setupDatabase() {
         } catch (err) {
             console.error(`Failed to create table '${table.name}':`, err.message)
         }
+    }
+
+    // Add default admin
+    try {
+        const hashedPassword = await bcrypt.hash('admin123', 10)
+        await pool.query(
+            'INSERT IGNORE INTO Admin (username, password) VALUES (?, ?)',
+            ['admin', hashedPassword]
+        )
+        console.log('Default admin created')
+    } catch (err) {
+        console.error('Failed to create default admin:', err.message)
     }
 }
 

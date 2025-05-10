@@ -6,6 +6,8 @@ const pool = require('./config/connection')
 const setupDatabase = require('./config/setupDatabase')
 const authRoutes = require('./router/auth')
 const userRoutes = require('./router/user')
+const dormitoryRoutes = require('./router/dormitory')
+const adminRoutes = require('./router/admin')
 
 const app = express()
 
@@ -41,3 +43,7 @@ setupDatabase()
 //Routes 
 app.use('/api/auth',authRoutes)
 app.use('/api/user', userRoutes)
+
+// Admin routes
+app.use('/api/admin', adminRoutes)
+app.use('/api/dormitory', dormitoryRoutes)
