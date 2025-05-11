@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function HeroSection() {
   const images = [
@@ -8,26 +9,38 @@ export default function HeroSection() {
     './hero-bg4.jpg',
   ];
   const [index, setIndex] = useState(0);
+  const [fade, setFade] = useState(true);
 
   // เปลี่ยนภาพอัตโนมัติทุก 5 วินาที
   useEffect(() => {
     const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % images.length);
-    }, 10000);
+      setFade(false); // ค่อย ๆ หายก่อน
+     setTimeout(() => {
+        setIndex((prev) => (prev + 1) % images.length);
+        setFade(true); // แล้วค่อย ๆ โผล่มา
+      }, 250); // เวลา fade out (ต้องน้อยกว่าหรือเท่ากับ duration)
+    }, 7000);
+
     return () => clearInterval(interval);
   }, []);
 
   const changeImage = (direction) => {
-    setIndex((prev) => (prev + direction + images.length) % images.length);
+    setFade(false);
+    setTimeout(() => {
+      setIndex((prev) => (prev + direction + images.length) % images.length);
+      setFade(true);
+    }, 250);
   };
 
   return (
-    <section className="w-full h-screen bg-cover bg-center relative">
+    <section className="w-full h-[80vh] bg-cover bg-center relative">
       {/* รูป carousel */}
       <img
         src={images[index]}
         alt="Dorm Slide"
-        className="absolute w-full h-full object-cover opacity-30"
+        className={`absolute w-full h-full object-cover transition-opacity duration-700 ${
+          fade ? 'opacity-30' : 'opacity-0'
+        }`}
       />
 
       {/* ปุ่มลูกศร */}
@@ -58,14 +71,20 @@ export default function HeroSection() {
             <div className="absolute left-0 top-0 w-[474px] h-[88px] border-5 border-white rounded-full z-0"></div>
 
             {/* ปุ่ม Login */}
-            <button className="absolute left-0 top-0 w-[200px] h-[88px] text-[32px] font-normal bg-transparent rounded-[30px] z-10 hover:bg-white/30 transition">
-              sign in
-            </button>
+            <Link
+             to="/signin"
+             className="absolute left-0 top-0 w-[200px] h-[88px] text-[32px] font-normal bg-transparent rounded-[30px] z-10 hover:bg-white/30 transition flex items-center justify-center"
+             >
+             sign in
+            </Link>
 
             {/* ปุ่ม Sign up */}
-            <button className="absolute right-0 top-0 w-[274px] h-[88px] text-[32px] font-normal bg-white rounded-[30px] border-[5px] border-white z-20 shadow-sm hover:bg-gray-100 transition -ml-6">
-              sign up
-            </button>
+            <Link
+             to="/signup"
+             className="absolute right-0 top-0 w-[274px] h-[88px] text-[32px] font-normal bg-white rounded-[30px] border-[5px] border-white z-20 shadow-sm hover:bg-gray-100 transition -ml-6 flex items-center justify-center"
+            >
+             sign up
+            </Link>
           </div>
         </div>
       </div>
