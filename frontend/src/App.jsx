@@ -15,6 +15,8 @@ import RoomList from './pages/RoomList'
 import AdminSignIn from './pages/AdminSignIn'
 import AdminDashboard from './pages/AdminDashboard'
 import AdminProtectedRoute from './components/AdminProtectedRoute'
+import AddEmployee from './pages/AddEmployee'
+import EmployeeList from './pages/EmployeeList'
 
 function App() {
   const [isAuthenticated, setAuth] = useState(!!localStorage.getItem("token"))
@@ -56,6 +58,8 @@ function App() {
                   path="dormitory/:Dormitory_ID/rooms"
                   element={<AdminProtectedRoute> <RoomList /> </AdminProtectedRoute>}
                 />
+                <Route path="employee/add" element={<AdminProtectedRoute> <AddEmployee /> </AdminProtectedRoute>} />
+                <Route path="employee" element={<AdminProtectedRoute> <EmployeeList /> </AdminProtectedRoute>} />
               </Routes>
             </>
           }

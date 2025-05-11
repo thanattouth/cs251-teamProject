@@ -8,6 +8,7 @@ const authRoutes = require('./router/auth')
 const userRoutes = require('./router/user')
 const dormitoryRoutes = require('./router/dormitory')
 const adminRoutes = require('./router/admin')
+const employeeRoutes = require('./router/employee')
 
 const app = express()
 
@@ -47,3 +48,4 @@ app.use('/api/user', userRoutes)
 // Admin routes
 app.use('/api/admin', adminRoutes)
 app.use('/api/dormitory', dormitoryRoutes)
+app.use('/api/employee', employeeRoutes)

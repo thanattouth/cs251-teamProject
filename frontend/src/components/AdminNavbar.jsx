@@ -37,7 +37,7 @@ const AdminNavbar = () => {
             <Link to="#" className="hover:text-gray-300">
               Tenant
             </Link>
-            <Link to="#" className="hover:text-gray-300">
+            <Link to="/admin/employee" className="hover:text-gray-300">
               Employee
             </Link>
             <Link to="/admin/dormitory" className="hover:text-gray-300">

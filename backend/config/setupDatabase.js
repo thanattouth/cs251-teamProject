@@ -30,7 +30,7 @@ async function setupDatabase() {
             name: 'Employee',
             sql: `
             CREATE TABLE IF NOT EXISTS Employee (
-                Employee_ID INT AUTO_INCREMENT PRIMARY KEY,
+                Employee_ID VARCHAR(8) PRIMARY KEY,
                 ID_card_number VARCHAR(20),
                 firstname VARCHAR(50),
                 lastname VARCHAR(50),
@@ -40,15 +40,15 @@ async function setupDatabase() {
         },
         {
             name: 'Dormitory',
-                sql: `
-                CREATE TABLE IF NOT EXISTS Dormitory (
-                    Dormitory_ID CHAR(1) PRIMARY KEY,
-                    Name VARCHAR(20),
-                    Location VARCHAR(255),
-                    Floor INT NOT NULL,
-                    RoomsPerFloor INT NOT NULL,
-                    Electric_bill INT CHECK (Electric_bill BETWEEN 0 AND 9),
-                    Water_bill INT CHECK (Water_bill BETWEEN 0 AND 999)
+            sql: `
+            CREATE TABLE IF NOT EXISTS Dormitory (
+                Dormitory_ID CHAR(1) PRIMARY KEY,
+                Name VARCHAR(20),
+                Location VARCHAR(255),
+                Floor INT NOT NULL,
+                RoomsPerFloor INT NOT NULL,
+                Electric_bill INT CHECK (Electric_bill BETWEEN 0 AND 9),
+                Water_bill INT CHECK (Water_bill BETWEEN 0 AND 999)
             )`
         },
         {
@@ -104,7 +104,7 @@ async function setupDatabase() {
                 Payment_ID INT AUTO_INCREMENT PRIMARY KEY,
                 Tenant_ID INT,
                 Bill_date DATE,
-                Employee_ID INT,
+                Employee_ID VARCHAR(8),
                 amount DECIMAL(10, 2),
                 payment_date DATE,
                 FOREIGN KEY (Tenant_ID) REFERENCES Tenant(Tenant_ID),
@@ -131,10 +131,38 @@ async function setupDatabase() {
             name: 'Technician',
             sql: `
             CREATE TABLE IF NOT EXISTS Technician (
-                employee_ID INT,
+                Employee_ID VARCHAR(8) NOT NULL,
                 specialty VARCHAR(100),
-                PRIMARY KEY (employee_ID),
-                FOREIGN KEY (employee_ID) REFERENCES Employee(employee_ID)
+                PRIMARY KEY (Employee_ID),
+                FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID)
+            )`
+        },
+        {
+            name: 'Housekeeper',
+            sql: `
+            CREATE TABLE IF NOT EXISTS Housekeeper (
+                Employee_ID VARCHAR(8) NOT NULL,
+                Floor_assigned VARCHAR(20),
+                PRIMARY KEY (Employee_ID),
+                FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID)
+            )`
+        },
+        {
+            name: 'Security_guard',
+            sql: `
+            CREATE TABLE IF NOT EXISTS Security_Guard (
+                Employee_ID VARCHAR(8) PRIMARY KEY,
+                Shift VARCHAR(20),
+                FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID)
+            )`
+        },
+                {
+            name: 'Manager',
+            sql: `
+            CREATE TABLE IF NOT EXISTS Manager (
+                Employee_ID VARCHAR(8) PRIMARY KEY,
+                Department VARCHAR(20),
+                FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID)
             )`
         },
         {
@@ -142,7 +170,7 @@ async function setupDatabase() {
             sql: `
             CREATE TABLE IF NOT EXISTS Maintenance (
                 Maintenance_ID INT AUTO_INCREMENT PRIMARY KEY,
-                Employee_ID INT,
+                Employee_ID VARCHAR(8),
                 Room_ID VARCHAR(10),
                 cost DECIMAL(10, 2),
                 maintenance_date DATE,
