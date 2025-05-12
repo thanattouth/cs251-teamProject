@@ -1,82 +1,153 @@
-import React from 'react';
+import React, { useState } from 'react';
+import RoomMap from '../components/RoomMap';
 
 const Reservation = () => {
-  return (
-    <div className="min-h-screen bg-gray-100 py-10 px-4">
-      <div className="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-lg">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Room Reservation</h1>
+  const [selectedRoom, setSelectedRoom] = useState('');
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    checkIn: '',
+    checkOut: '',
+    guests: 1,
+  });
 
-        <form className="space-y-6">
+  const [showRoomMap, setShowRoomMap] = useState(false); // 🔁 toggle popup
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const fullData = { ...formData, roomType: selectedRoom };
+    localStorage.setItem('reservation', JSON.stringify(fullData));
+    alert(`✅ Reservation submitted for ${selectedRoom}`);
+    setSelectedRoom('');
+  };
+
+  return (
+    <div className="relative min-h-screen pt-28 pb-16 px-4 overflow-hidden">
+      <div
+        className="absolute inset-0 bg-cover bg-center z-0"
+        style={{ backgroundImage: 'url("/hero-bg2.jpg")' }}
+      ></div>
+
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/100 to-white/25"></div>
+
+      <div className="relative z-10 max-w-3xl mx-auto bg-white shadow-xl rounded-2xl p-10">
+        <h1 className="text-4xl font-bold text-center text-blue-700 mb-10">
+          🏨 Room Reservation
+        </h1>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Room Picker */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Selected Room
+            </label>
+            <div className="flex items-center gap-4">
+              <input
+                type="text"
+                value={selectedRoom || 'No room selected'}
+                readOnly
+                className="w-full bg-gray-100 border border-gray-300 rounded-xl px-4 py-2 text-gray-600"
+              />
+              <button
+                type="button"
+                onClick={() => setShowRoomMap(true)}
+                className="text-sm text-blue-600 underline"
+              >
+                เลือกห้อง
+              </button>
+            </div>
+          </div>
+
           {/* Full Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Full Name</label>
             <input
               type="text"
-              placeholder="Enter your name"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-xl px-4 py-2"
+              required
             />
           </div>
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Email</label>
             <input
               type="email"
-              placeholder="example@email.com"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-xl px-4 py-2"
+              required
             />
           </div>
 
-          {/* Check-in & Check-out */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Dates */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Check-in Date</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Check-in</label>
               <input
                 type="date"
-                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                name="checkIn"
+                value={formData.checkIn}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded-xl px-4 py-2"
+                required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Check-out Date</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Check-out</label>
               <input
                 type="date"
-                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                name="checkOut"
+                value={formData.checkOut}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded-xl px-4 py-2"
+                required
               />
             </div>
-          </div>
-
-          {/* Room Type */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Room Type</label>
-            <select className="w-full border border-gray-300 rounded-lg px-4 py-2">
-              <option value="">Select a room</option>
-              <option value="standard">Standard</option>
-              <option value="deluxe">Deluxe</option>
-              <option value="suite">Suite</option>
-            </select>
           </div>
 
           {/* Guests */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Number of Guests</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Number of Guests</label>
             <input
               type="number"
+              name="guests"
+              value={formData.guests}
+              onChange={handleChange}
               min="1"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              max="2"
+              className="w-full border border-gray-300 rounded-xl px-4 py-2"
+              required
             />
           </div>
 
-          {/* Submit Button */}
-          <div className="text-center">
+          <div className="text-center pt-4">
             <button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium shadow-md transition duration-200"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold shadow-lg"
             >
-              Reserve Now
+               Reserve Now
             </button>
           </div>
         </form>
       </div>
+
+      {/* 🔘 RoomMap Popup */}
+      {showRoomMap && (
+        <RoomMap
+          onSelect={(roomNumber) => setSelectedRoom(roomNumber)}
+          onClose={() => setShowRoomMap(false)}
+        />
+      )}
     </div>
   );
 };
