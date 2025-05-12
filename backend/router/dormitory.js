@@ -4,39 +4,58 @@ const router = express.Router()
 
 // Add Dormitory and Generate Rooms Automatically
 router.post('/', async (req, res) => {
-  const { Dormitory_ID, Name, Location, Floor, Electric_bill, Water_bill, RoomsPerFloor, Cost } = req.body
+  const {
+    Dormitory_ID,
+    Name,
+    Location,
+    Floor,
+    Electric_bill,
+    Water_bill,
+    RoomsPerFloor,
+    Cost,
+    FurnitureSet // <== array ของ { furniture_id, quantity }
+  } = req.body
 
+  const conn = await pool.getConnection()
   try {
-    // Insert Dormitory
-    await pool.query(
+    await conn.beginTransaction()
+
+    await conn.query(
       'INSERT INTO Dormitory (Dormitory_ID, Name, Location, Floor, Electric_bill, Water_bill, RoomsPerFloor) VALUES (?, ?, ?, ?, ?, ?, ?)',
       [Dormitory_ID, Name, Location, Floor, Electric_bill, Water_bill, RoomsPerFloor]
     )
 
-    // Generate Rooms
-    const roomInsertPromises = []
-    for (let floor = 1; floor <= Floor; floor++) {
-      for (let roomNumber = 1; roomNumber <= RoomsPerFloor; roomNumber++) {
-        const Room_ID = `${Dormitory_ID}${String(floor).padStart(2, '0')}${String(roomNumber).padStart(2, '0')}` // A00XX
-        const Room_type = 'single' // Default room type
-        const Status = 'available' // Default status
+    for (let floorNum = 1; floorNum <= Floor; floorNum++) {
+      for (let roomNum = 1; roomNum <= RoomsPerFloor; roomNum++) {
+        const Room_ID = `${Dormitory_ID}${String(floorNum).padStart(2, '0')}${String(roomNum).padStart(2, '0')}`
+        const room_type_id = 1
+        const Status = 'empty'
 
-        roomInsertPromises.push(
-          pool.query(
-            'INSERT INTO Room (Room_ID, Dormitory_ID, Room_type, Status, Floor, Cost, room_number) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [Room_ID, Dormitory_ID, Room_type, Status, floor, Cost, roomNumber]
-          )
+        await conn.query(
+          'INSERT INTO Room (Room_ID, Dormitory_ID, room_type_id, status, floor, cost, room_number) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          [Room_ID, Dormitory_ID, room_type_id, Status, floorNum, Cost, roomNum]
         )
+
+        if (Array.isArray(FurnitureSet)) {
+          for (const item of FurnitureSet) {
+            await conn.query(
+              'INSERT INTO Furniture_Set (Room_ID, Furniture_ID, quantity) VALUES (?, ?, ?)',
+              [Room_ID, item.furniture_id, item.quantity]
+            )
+          }
+        }
       }
     }
 
     // Execute all room insert queries
-    await Promise.all(roomInsertPromises)
-
-    res.status(201).json({ message: 'Dormitory and rooms added successfully' })
+    await conn.commit()
+    res.status(201).json({ message: 'Dormitory, rooms, and furniture added successfully' })
   } catch (error) {
-    console.error('Error adding dormitory and rooms:', error)
+    await conn.rollback()
+    console.error('Error adding dormitory with furniture:', error)
     res.status(500).json({ error: 'Internal server error' })
+  } finally {
+    conn.release()
   }
 })
 
