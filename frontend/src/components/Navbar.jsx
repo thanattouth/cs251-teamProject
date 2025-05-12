@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import Reservation from '../pages/Reservation'
 
 function Navbar({ isAuthenticated, setAuth }) {
   const navigate = useNavigate()
@@ -36,7 +37,7 @@ function Navbar({ isAuthenticated, setAuth }) {
             <Link to="/" className="text-black hover:text-gray-700">HOME</Link>
             <Link to="/service" className="text-black hover:text-gray-700">OUR SERVICE</Link>
             <Link to="/news" className="text-black hover:text-gray-700">NEWS & ACTIVITY</Link>
-            <Link to="/reservation" className="text-black hover:text-gray-700">RESERVATION</Link>
+            <Link to="/Reservation" className="text-black hover:text-gray-700">RESERVATION</Link>
           </div>
 
           {/* Auth Section */}
