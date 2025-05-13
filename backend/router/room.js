@@ -58,4 +58,42 @@ router.get('/:room_id/details', async (req, res) => {
   }
 })
 
+// ดึงข้อมูลห้องของผู้ใช้ตาม Tenant_ID
+router.get('/tenant/:tenantId/room-details', async (req, res) => {
+  const { tenantId } = req.params
+  try {
+    const [[tenant]] = await pool.query(
+      `SELECT current_room_id FROM Tenant WHERE Tenant_ID = ?`,
+      [tenantId]
+    )
+
+    if (!tenant || !tenant.current_room_id) {
+      return res.status(404).json({ error: 'No room assigned to tenant' })
+    }
+
+    const room_id = tenant.current_room_id
+
+    // ดึงข้อมูลผู้เข้าพักและเฟอร์นิเจอร์ (reuse logic จาก /:room_id/details)
+    const [[roomInfo]] = await pool.query(
+      `SELECT r.*, d.Name as dormitory_name
+       FROM Room r
+       JOIN Dormitory d ON r.Dormitory_ID = d.Dormitory_ID
+       WHERE r.Room_ID = ?`,
+      [room_id]
+    )
+
+    const [furniture] = await pool.query(
+      `SELECT fs.quantity, f.furniture_name 
+       FROM Furniture_Set fs
+       JOIN Furniture f ON fs.furniture_ID = f.Furniture_ID
+       WHERE fs.Room_ID = ?`,
+      [room_id]
+    )
+
+    res.json({ room: roomInfo, furniture })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
 module.exports = router

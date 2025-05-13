@@ -15,6 +15,7 @@ const bookingRoutes = require('./router/booking')
 const furnitureRoutes = require('./router/furniture')
 const roomRouter = require('./router/room')
 const leaseRouter = require('./router/lease')
+const repairRoute = require('./router/repair')
 
 const app = express()
 
@@ -62,3 +63,4 @@ app.use('/api/booking', bookingRoutes)
 app.use('/api', furnitureRoutes)
 app.use('/api/room', roomRouter)
 app.use('/api/lease', leaseRouter)
+app.use('/api/repair', repairRoute)

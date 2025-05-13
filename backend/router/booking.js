@@ -147,4 +147,20 @@ router.put('/:id/checkin', async (req, res) => {
   }
 })
 
+// ดึง bookings เฉพาะของ Tenant คนใดคนหนึ่ง
+router.get('/tenant/:tenantId', async (req, res) => {
+  const { tenantId } = req.params
+  try {
+    const [rows] = await pool.query(
+      'SELECT * FROM Booking WHERE Tenant_ID = ? ORDER BY Booking_ID DESC',
+      [tenantId]
+    )
+    res.json(rows)
+  } catch (error) {
+    console.error('Get tenant bookings error:', error)
+    res.status(500).json({ error: 'Internal server error' })
+  }
+})
+
+
 module.exports = router

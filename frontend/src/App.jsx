@@ -22,6 +22,12 @@ import FurnitureList from './pages/FurnitureList'
 import BookRoom from './pages/BookRoom'
 import AdminBookingDashboard from './pages/AdminBookingDashboard'
 import AddLease from './pages/AddLease'
+import MyBookings from './pages/MyBookings'
+import MyRoomDetails from './pages/MyRoomDetails'
+import MyRepairs from './pages/MyRepairs'
+import ReportRepair from './pages/ReportRepair'
+import AllRepairsAdmin from './pages/AllRepairsAdmin'
+import CompleteRepairForm from './pages/CompleteRepairForm'
 
 function App() {
   const [isAuthenticated, setAuth] = useState(!!localStorage.getItem("token"))
@@ -43,6 +49,10 @@ function App() {
                 <Route path="/dashboard" element={<ProtectedRoute> <Dashboard /> </ProtectedRoute>} />
                 <Route path="/edit-user" element={<ProtectedRoute> <EditUser setAuth={setAuth} /> </ProtectedRoute>} />
                 <Route path="/booking" element={<ProtectedRoute> <BookRoom /> </ProtectedRoute>} />
+                <Route path="/my-booking" element={<ProtectedRoute> <MyBookings user={JSON.parse(localStorage.getItem('user'))} /> </ProtectedRoute>} />
+                <Route path="/my-room" element={<ProtectedRoute> <MyRoomDetails user={JSON.parse(localStorage.getItem('user'))} /> </ProtectedRoute>} />
+                <Route path="/my-repairs" element={<ProtectedRoute> <MyRepairs  user={JSON.parse(localStorage.getItem('user'))} /> </ProtectedRoute>} />
+                <Route path="/report-repair" element={<ProtectedRoute> <ReportRepair  user={JSON.parse(localStorage.getItem('user'))} /> </ProtectedRoute>} />
               </Routes>
             </>
           }
@@ -70,6 +80,8 @@ function App() {
                 <Route path="furniture" element={<AdminProtectedRoute> <FurnitureList /> </AdminProtectedRoute>} />
                 <Route path="booking" element={<AdminProtectedRoute> <AdminBookingDashboard /> </AdminProtectedRoute>} />
                 <Route path="lease" element={<AdminProtectedRoute> <AddLease /> </AdminProtectedRoute>} />
+                <Route path="repairs" element={<AdminProtectedRoute> <AllRepairsAdmin  /> </AdminProtectedRoute>} />
+                <Route path="repairs/complete/:requestId" element={<AdminProtectedRoute> <CompleteRepairForm /> </AdminProtectedRoute>} />
               </Routes>
             </>
           }
