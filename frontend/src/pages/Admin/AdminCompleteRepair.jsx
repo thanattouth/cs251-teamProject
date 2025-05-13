@@ -34,38 +34,52 @@ const CompleteRepairForm = () => {
     }
   }
 
-  if (!repair) return <p>กำลังโหลด...</p>
+  if (!repair) return (
+    <div className="text-center text-gray-500 py-10">กำลังโหลดข้อมูล...</div>
+  )
 
   return (
-    <div className="max-w-xl mx-auto p-6 bg-white shadow rounded mt-10">
-      <h2 className="text-xl font-bold mb-4">อัปเดตการซ่อม: ห้อง {repair.Room_ID}</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block mb-1">ค่าซ่อม (บาท)</label>
+    <div className="max-w-xl mx-auto mt-12 bg-white p-8 rounded-xl shadow-md">
+      <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+        อัปเดตการซ่อม: ห้อง {repair.Room_ID}
+      </h2>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            ค่าซ่อม (บาท)
+          </label>
           <input
             type="number"
-            className="w-full border p-2"
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
             value={cost}
             onChange={(e) => setCost(e.target.value)}
             required
           />
         </div>
-        <div className="mb-4">
-          <label className="block mb-1">รายละเอียดเพิ่มเติม</label>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            รายละเอียดเพิ่มเติม
+          </label>
           <textarea
-            className="w-full border p-2"
             rows="4"
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
           />
         </div>
-        <button className="bg-green-600 text-white px-4 py-2 rounded" type="submit">
-          ยืนยันซ่อมเสร็จสิ้น
-        </button>
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition"
+          >
+            ยืนยันซ่อมเสร็จสิ้น
+          </button>
+        </div>
       </form>
     </div>
   )
+
 }
 
 export default CompleteRepairForm

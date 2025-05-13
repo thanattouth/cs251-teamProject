@@ -49,48 +49,62 @@ const AddDormitoryForm = () => {
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Add Dormitory</h1>
-      <form onSubmit={handleAddDormitory} className="space-y-4">
+    <div className="max-w-5xl mx-auto p-8 bg-white rounded-2xl shadow-md">
+      <h1 className="text-3xl font-semibold text-center mb-8 text-gray-800">เพิ่มข้อมูลหอพัก</h1>
+      <form onSubmit={handleAddDormitory} className="space-y-6">
 
         {/* ข้อมูลทั่วไปของหอพัก */}
         {Object.keys(formData).map((field) => (
           <div key={field}>
-            <label className="block font-medium capitalize">{field.replace(/_/g, ' ')}</label>
+            <label className="block text-gray-700 font-medium mb-1 capitalize">
+              {field.replace(/_/g, ' ')}
+            </label>
             <input
               type={['Floor', 'RoomsPerFloor', 'Electric_bill', 'Water_bill', 'Cost'].includes(field) ? 'number' : 'text'}
               name={field}
               value={formData[field]}
               onChange={handleInputChange}
-              className="border p-2 w-full"
+              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400"
               required
             />
           </div>
         ))}
 
-        {/* ฟอร์มเฟอร์นิเจอร์ */}
+        {/* เฟอร์นิเจอร์ */}
         <div>
-          <label className="block font-medium mb-1">เฟอร์นิเจอร์พื้นฐานในแต่ละห้อง</label>
-          <div className="grid grid-cols-2 gap-2">
+          <label className="block text-gray-700 font-medium mb-2">เฟอร์นิเจอร์พื้นฐานในแต่ละห้อง</label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {furnitureOptions.map(f => (
-              <div key={f.Furniture_ID} className="flex items-center">
-                <span className="w-1/2">{f.furniture_name}</span>
+              <div key={f.Furniture_ID} className="flex items-center justify-between border border-gray-200 rounded-lg p-3 bg-gray-50">
+                <span className="text-gray-800">{f.furniture_name}</span>
                 <input
                   type="number"
                   min="0"
-                  className="border p-1 w-20 ml-2"
                   value={furnitureQuantities[f.Furniture_ID] || ''}
                   onChange={(e) => handleFurnitureQuantityChange(e, f.Furniture_ID)}
+                  className="w-20 px-2 py-1 border border-gray-300 rounded-md text-right"
                 />
               </div>
             ))}
           </div>
         </div>
 
+
         {/* ปุ่ม */}
-        <div className="flex space-x-4">
-          <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded">Save</button>
-          <button type="button" onClick={() => navigate('/admin/dormitory')} className="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
+        <div className="flex justify-end space-x-4 pt-4">
+          <button
+            type="button"
+            onClick={() => navigate('/admin/dormitory')}
+            className="px-5 py-2 rounded-xl border border-gray-300 bg-white text-gray-600 hover:bg-gray-100 transition"
+          >
+            ยกเลิก
+          </button>
+          <button
+            type="submit"
+            className="px-5 py-2 rounded-xl bg-green-500 text-white hover:bg-green-600 transition"
+          >
+            บันทึก
+          </button>
         </div>
       </form>
     </div>

@@ -1,37 +1,41 @@
 import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+
+//import Protect
+import PublicRoute from './components/PublicRoute'
+import ProtectedRoute from './components/ProtectedRoute'
+import AdminProtectedRoute from './components/AdminProtectedRoute'
+//import User
 import Navbar from './components/Navbar'
-import AdminNavbar from './components/AdminNavbar'
 import Home from './pages/Home'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
-import PublicRoute from './components/PublicRoute'
 import Dashboard from './pages/Dashboard'
-import ProtectedRoute from './components/ProtectedRoute'
 import EditUser from './pages/EditUser'
-import Dormitory from './pages/Dormitory'
-import AddDormitory from './pages/AddDormitory'
-import RoomList from './pages/RoomList'
-import AdminSignIn from './pages/AdminSignIn'
-import AdminDashboard from './pages/AdminDashboard'
-import AdminProtectedRoute from './components/AdminProtectedRoute'
-import AddEmployee from './pages/AddEmployee'
-import EmployeeList from './pages/EmployeeList'
-import TenantList from './pages/TenantList'
-import FurnitureList from './pages/FurnitureList'
 import BookRoom from './pages/BookRoom'
-import AdminBookingDashboard from './pages/AdminBookingDashboard'
-import AddLease from './pages/AddLease'
 import MyBookings from './pages/MyBookings'
 import MyRoomDetails from './pages/MyRoomDetails'
 import MyRepairs from './pages/MyRepairs'
 import ReportRepair from './pages/ReportRepair'
-import AllRepairsAdmin from './pages/AllRepairsAdmin'
-import CompleteRepairForm from './pages/CompleteRepairForm'
 import BillList from './pages/BillList'
 import PaymentHistory from './pages/PaymentHistory'
-import AdminBillControl from './pages/AdminBillControl'
-import AdminBillPayment from './pages/AdminBillPayment'
+//import Admin
+import AdminNavbar from './components/AdminNavbar'
+import AdminSignIn from './pages/Admin/AdminSignin'
+import AdminDashboard from './pages/Admin/AdminDashboard'
+import Dormitory from './pages/Admin/AdminListDormitory'
+import AddDormitory from './pages/Admin/AdminAddDormitory'
+import RoomList from './pages/Admin/AdminListRoom'
+import AddEmployee from './pages/Admin/AdminAddEmployee'
+import EmployeeList from './pages/Admin/AdminListEmployee'
+import TenantList from './pages/Admin/AdminListTenant'
+import FurnitureList from './pages/Admin/AdminListFurniture'
+import AdminBookingDashboard from './pages/Admin/AdminBookingDashboard'
+import AddLease from './pages/Admin/AdminAddLease'
+import AllRepairsAdmin from './pages/Admin/AdminAllRepairs'
+import CompleteRepairForm from './pages/Admin/AdminCompleteRepair'
+import AdminBillControl from './pages/Admin/AdminBillControl'
+import AdminBillPayment from './pages/Admin/AdminBillPayment'
 
 function App() {
   const [isAuthenticated, setAuth] = useState(!!localStorage.getItem("token"))
@@ -63,7 +67,6 @@ function App() {
             </>
           }
         />
-
         {/* Admin Routes */}
         <Route
           path="/admin/*"
@@ -76,10 +79,7 @@ function App() {
                 <Route path="dormitory" element={<AdminProtectedRoute> <Dormitory /> </AdminProtectedRoute>} />
                 <Route path="add-dormitory" element={<AdminProtectedRoute> <AddDormitory /> </AdminProtectedRoute>} />
                 <Route path="rooms" element={<AdminProtectedRoute> <RoomList /> </AdminProtectedRoute>} />
-                <Route
-                  path="dormitory/:Dormitory_ID/rooms"
-                  element={<AdminProtectedRoute> <RoomList /> </AdminProtectedRoute>}
-                />
+                <Route path="dormitory/:Dormitory_ID/rooms" element={<AdminProtectedRoute> <RoomList /> </AdminProtectedRoute>} />
                 <Route path="employee/add" element={<AdminProtectedRoute> <AddEmployee /> </AdminProtectedRoute>} />
                 <Route path="employee" element={<AdminProtectedRoute> <EmployeeList /> </AdminProtectedRoute>} />
                 <Route path="tenant" element={<AdminProtectedRoute> <TenantList /> </AdminProtectedRoute>} />

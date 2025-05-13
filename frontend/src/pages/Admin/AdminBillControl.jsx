@@ -24,16 +24,22 @@ const AdminBillControl = () => {
   }
 
   return (
-    <div className="p-6 max-w-5xl mx-auto bg-white shadow rounded">
-      <h2 className="text-2xl font-bold mb-4">สร้างบิลแบบระบุห้อง</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="max-w-5xl mx-auto p-8 bg-white shadow-md rounded-xl">
+      <h2 className="text-3xl font-semibold text-gray-800 mb-6">สร้างบิลแบบระบุห้อง</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        {/* เลือกห้อง */}
         <div>
-          <h3 className="font-semibold mb-2">เลือกห้อง:</h3>
-          <ul className="border max-h-96 overflow-y-auto">
+          <h3 className="text-lg font-medium text-gray-700 mb-2">เลือกห้อง</h3>
+          <ul className="border rounded-lg max-h-[400px] overflow-y-auto divide-y">
             {leases.map(lease => (
               <li
                 key={lease.Lease_ID}
-                className={`p-2 cursor-pointer border-b ${selected?.Lease_ID === lease.Lease_ID ? 'bg-blue-100' : ''}`}
+                className={`p-3 cursor-pointer transition ${
+                  selected?.Lease_ID === lease.Lease_ID
+                    ? 'bg-blue-100 font-medium'
+                    : 'hover:bg-gray-50'
+                }`}
                 onClick={() => {
                   setSelected(lease)
                   setUnitUsed('')
@@ -46,26 +52,31 @@ const AdminBillControl = () => {
           </ul>
         </div>
 
+        {/* แสดงรายละเอียดเมื่อเลือก */}
         {selected && (
           <div>
-            <h3 className="font-semibold mb-2">รายละเอียด:</h3>
-            <p>ห้อง: {selected.Room_ID}</p>
-            <p>ผู้เช่า: {selected.firstname} {selected.lastname}</p>
-            <p>ค่าเช่า: ฿{selected.monthly_rent}</p>
-            <p>ค่าน้ำเหมาจ่าย: ฿{selected.Water_bill}</p>
-            <p>ค่าซ่อมบำรุงเดือนนี้: ฿{selected.repairCost || 0}</p>
-            <div className="mt-4">
-              <label>หน่วยไฟที่ใช้: </label>
+            <h3 className="text-lg font-medium text-gray-700 mb-4">รายละเอียดห้อง</h3>
+            <div className="space-y-2 text-gray-700">
+              <p><strong>ห้อง:</strong> {selected.Room_ID}</p>
+              <p><strong>ผู้เช่า:</strong> {selected.firstname} {selected.lastname}</p>
+              <p><strong>ค่าเช่า:</strong> ฿{selected.monthly_rent}</p>
+              <p><strong>ค่าน้ำเหมาจ่าย:</strong> ฿{selected.Water_bill}</p>
+              <p><strong>ค่าซ่อมบำรุงเดือนนี้:</strong> ฿{selected.repairCost || 0}</p>
+            </div>
+
+            <div className="mt-6">
+              <label className="block text-sm font-medium text-gray-600 mb-1">หน่วยไฟที่ใช้</label>
               <input
                 type="number"
                 value={unitUsed}
                 onChange={e => setUnitUsed(e.target.value)}
-                className="border rounded p-1 w-32"
+                className="w-32 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
+                placeholder="เช่น 50"
               />
             </div>
 
             {unitUsed && !isNaN(unitUsed) && (
-              <div className="mt-2 text-lg font-semibold">
+              <div className="mt-4 text-base font-semibold text-gray-800 space-y-1">
                 <p>ค่าไฟ: ฿{Number(selected.Electric_bill) * Number(unitUsed)}</p>
                 <p>
                   ยอดรวมทั้งหมด: ฿{(
@@ -80,11 +91,12 @@ const AdminBillControl = () => {
 
             <button
               onClick={handleGenerate}
-              className="mt-4 bg-green-600 text-white px-4 py-2 rounded"
+              className="mt-6 bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg transition"
             >
               สร้างบิล
             </button>
-            {message && <p className="mt-2 text-blue-600">{message}</p>}
+
+            {message && <p className="mt-3 text-green-600">{message}</p>}
           </div>
         )}
       </div>

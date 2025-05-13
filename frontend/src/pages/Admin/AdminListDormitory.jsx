@@ -2,16 +2,14 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 
-const Dormitory = () => {
+const AdminListDormitory = () => {
   const [dormitories, setDormitories] = useState([])
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Fetch existing dormitories
     axios
       .get('http://localhost:5000/api/dormitory')
       .then((response) => {
-        console.log('Dormitories fetched:', response.data) // ตรวจสอบข้อมูลที่ได้รับ
         setDormitories(response.data)
       })
       .catch((error) => console.error('Error fetching dormitories:', error))
@@ -22,35 +20,35 @@ const Dormitory = () => {
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Dormitory Management</h1>
+    <div className="p-8 max-w-4xl mx-auto bg-white rounded-2xl shadow-md">
+      <h1 className="text-3xl font-semibold text-gray-800 mb-6">จัดการหอพักทั้งหมด</h1>
 
-      {/* Display Dormitories */}
+      {/* รายการหอพัก */}
       {Array.isArray(dormitories) && dormitories.length > 0 ? (
-        <ul className="mb-6">
+        <ul className="space-y-4 mb-6">
           {dormitories.map((dorm) => (
             <li
               key={dorm.Dormitory_ID}
-              className="border p-2 mb-2 cursor-pointer hover:bg-gray-100"
               onClick={() => handleDormitoryClick(dorm.Dormitory_ID)}
+              className="p-4 border border-gray-200 rounded-xl shadow-sm bg-gray-50 hover:bg-gray-100 cursor-pointer transition"
             >
-              {dorm.Name}
+              <span className="text-gray-800 font-medium text-lg">{dorm.Name}</span>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="mb-6">No dormitories available.</p>
+        <p className="text-gray-500 mb-6">ไม่มีข้อมูลหอพัก</p>
       )}
 
-      {/* Add Dormitory Button */}
+      {/* ปุ่มเพิ่มหอพัก */}
       <button
         onClick={() => navigate('/admin/add-dormitory')}
-        className="bg-blue-500 text-white px-4 py-2 rounded"
+        className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-xl transition shadow"
       >
-        Add Dormitory
+        เพิ่มหอพักใหม่
       </button>
     </div>
   )
 }
 
-export default Dormitory
+export default AdminListDormitory
