@@ -50,4 +50,30 @@ router.post('/walkin', async (req, res) => {
   }
 })
 
+// GET /lease/active
+router.get('/active', async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      `SELECT 
+        l.Lease_ID, l.Room_ID, l.Tenant_ID, l.monthly_rent,
+        t.firstname, t.lastname,
+        d.Water_bill, d.Electric_bill,
+        SUM(m.cost) AS repairCost
+      FROM Lease l
+      JOIN Tenant t ON l.Tenant_ID = t.Tenant_ID
+      JOIN Room r ON l.Room_ID = r.Room_ID
+      JOIN Dormitory d ON r.Dormitory_ID = d.Dormitory_ID
+      LEFT JOIN Maintenance m 
+        ON m.Room_ID = r.Room_ID AND MONTH(m.maintenance_date) = MONTH(CURDATE()) AND YEAR(m.maintenance_date) = YEAR(CURDATE())
+      WHERE l.lease_status = 'active'
+      GROUP BY l.Lease_ID
+      ORDER BY l.Lease_ID DESC`
+    )
+    res.json(rows)
+  } catch (err) {
+    console.error('Error fetching active leases:', err)
+    res.status(500).json({ error: 'Internal server error' })
+  }
+})
+
 module.exports = router

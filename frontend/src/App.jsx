@@ -28,6 +28,10 @@ import MyRepairs from './pages/MyRepairs'
 import ReportRepair from './pages/ReportRepair'
 import AllRepairsAdmin from './pages/AllRepairsAdmin'
 import CompleteRepairForm from './pages/CompleteRepairForm'
+import BillList from './pages/BillList'
+import PaymentHistory from './pages/PaymentHistory'
+import AdminBillControl from './pages/AdminBillControl'
+import AdminBillPayment from './pages/AdminBillPayment'
 
 function App() {
   const [isAuthenticated, setAuth] = useState(!!localStorage.getItem("token"))
@@ -53,6 +57,8 @@ function App() {
                 <Route path="/my-room" element={<ProtectedRoute> <MyRoomDetails user={JSON.parse(localStorage.getItem('user'))} /> </ProtectedRoute>} />
                 <Route path="/my-repairs" element={<ProtectedRoute> <MyRepairs  user={JSON.parse(localStorage.getItem('user'))} /> </ProtectedRoute>} />
                 <Route path="/report-repair" element={<ProtectedRoute> <ReportRepair  user={JSON.parse(localStorage.getItem('user'))} /> </ProtectedRoute>} />
+                <Route path="/payment" element={<ProtectedRoute> <PaymentHistory   user={JSON.parse(localStorage.getItem('user'))} /> </ProtectedRoute>} />
+                <Route path="/bill" element={<ProtectedRoute> <BillList  user={JSON.parse(localStorage.getItem('user'))} /> </ProtectedRoute>} />
               </Routes>
             </>
           }
@@ -82,6 +88,8 @@ function App() {
                 <Route path="lease" element={<AdminProtectedRoute> <AddLease /> </AdminProtectedRoute>} />
                 <Route path="repairs" element={<AdminProtectedRoute> <AllRepairsAdmin  /> </AdminProtectedRoute>} />
                 <Route path="repairs/complete/:requestId" element={<AdminProtectedRoute> <CompleteRepairForm /> </AdminProtectedRoute>} />
+                <Route path="bill" element={<AdminProtectedRoute> <AdminBillControl  /> </AdminProtectedRoute>} />
+                <Route path="bill-payment" element={<AdminProtectedRoute> <AdminBillPayment  /> </AdminProtectedRoute>} />
               </Routes>
             </>
           }

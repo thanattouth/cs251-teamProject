@@ -3,6 +3,7 @@ import axios from 'axios'
 
 const MyRoomDetails = ({ user }) => {
   const [roomData, setRoomData] = useState(null)
+  const [dormUtility, setDormUtility] = useState({ water: null, electric: null })
   const [error, setError] = useState(null)
   const [repairs, setRepairs] = useState([])
 
@@ -20,6 +21,23 @@ const MyRoomDetails = ({ user }) => {
       .catch(err => {
         console.error('Error loading repair requests:', err)
       })
+    axios.get(`http://localhost:5000/api/room/tenant/${user.Tenant_ID}/room-details`)
+    .then(res => {
+      setRoomData(res.data)
+      // ดึงค่าน้ำค่าไฟจากหอพัก
+      const dormId = res.data?.room?.Dormitory_ID
+      if (dormId) {
+        axios.get(`http://localhost:5000/api/dormitory/${dormId}`)
+          .then(dormRes => {
+            setDormUtility({
+              water: dormRes.data.Water_bill,
+              electric: dormRes.data.Electric_bill
+            })
+          })
+          .catch(err => console.error('Error loading utility rates:', err))
+      }
+  })
+
   }, [user])
 
   if (error) {
@@ -42,7 +60,6 @@ const MyRoomDetails = ({ user }) => {
             <th className="border px-4 py-2">เลขห้อง</th>
             <th className="border px-4 py-2">ชั้น</th>
             <th className="border px-4 py-2">หอพัก</th>
-            {/* <th className="border px-4 py-2">ราคา</th> */}
           </tr>
         </thead>
         <tbody>
@@ -50,14 +67,13 @@ const MyRoomDetails = ({ user }) => {
             <td className="border px-4 py-2">{room.Room_ID}</td>
             <td className="border px-4 py-2">{room.Floor}</td>
             <td className="border px-4 py-2">{room.dormitory_name}</td>
-            {/* <td className="border px-4 py-2">{room.Cost} บาท</td> */}
           </tr>
         </tbody>
       </table>
       <div className="mb-6 space-y-2 text-gray-700">
         <p><strong>ค่าเช่ารายเดือน:</strong> {room.Cost} บาท</p>
-        <p><strong>ค่าน้ำหน่วยละ:</strong> {room.water_rate ?? '-'} บาท</p>
-        <p><strong>ค่าไฟหน่วยละ:</strong> {room.electric_rate ?? '-'} บาท</p>
+        <p><strong>ค่าน้ำหน่วยละ:</strong> {dormUtility.water ?? '-'} บาท</p>
+        <p><strong>ค่าไฟหน่วยละ:</strong> {dormUtility.electric ?? '-'} บาท</p>
       </div>
       <h3 className="text-lg font-semibold mb-2">รายการเฟอร์นิเจอร์ในห้อง</h3>
       {furniture.length > 0 ? (

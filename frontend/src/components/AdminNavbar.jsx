@@ -49,6 +49,15 @@ const AdminNavbar = () => {
             <Link to="/admin/lease" className="hover:text-gray-300">
               Lease
             </Link>
+            <Link to="/admin/repairs" className="hover:text-gray-300">
+              repairs
+            </Link>
+            <Link to="/admin/bill" className="hover:text-gray-300">
+              bill
+            </Link>
+            <Link to="/admin/bill-payment" className="hover:text-gray-300">
+              bill payment
+            </Link>
             <button onClick={handleLogout} className="hover:text-gray-300">
               Logout
             </button>

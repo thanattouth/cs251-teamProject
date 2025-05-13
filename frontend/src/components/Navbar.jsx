@@ -51,6 +51,8 @@ function Navbar({ isAuthenticated, setAuth }) {
               <div className="flex space-x-6 text-sm font-medium">
                 <Link to="/report-repair" className="text-black hover:text-gray-700">REPORT REPAIR</Link>
                 <Link to="/booking" className="text-black hover:text-gray-700">ADD BOOKING</Link>
+                <Link to="/bill" className="text-black hover:text-gray-700">BILL</Link>
+                <Link to="/payment" className="text-black hover:text-gray-700">PAYMENT</Link>
               </div>
               <div className="relative">
                 <button

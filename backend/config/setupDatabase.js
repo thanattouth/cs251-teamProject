@@ -214,6 +214,7 @@ async function setupDatabase() {
                 electric_fee DECIMAL(10, 2),
                 water_fee DECIMAL(10, 2),
                 total_amount DECIMAL(10, 2),
+                repair_cost DECIMAL(10,2) DEFAULT 0,
                 bill_status ENUM('unpaid', 'paid') DEFAULT 'unpaid',
                 FOREIGN KEY (Lease_ID) REFERENCES Lease(Lease_ID)
             )`
