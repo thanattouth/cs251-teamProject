@@ -6,7 +6,7 @@ function TenantList() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  useEffect(() => {
+  const fetchTenants = () => {
     axios.get('http://localhost:5000/api/tenant')
       .then(res => {
         setTenants(res.data)
@@ -16,7 +16,24 @@ function TenantList() {
         setError('ไม่สามารถโหลดข้อมูลผู้เช่าได้')
         setLoading(false)
       })
+  }
+
+  useEffect(() => {
+    fetchTenants()
   }, [])
+
+  const handleCheckout = async (tenantId) => {
+    if (!window.confirm("ยืนยันการเอาผู้ใช้ออกจากห้องพัก?")) return
+
+    try {
+      await axios.put(`http://localhost:5000/api/tenant/${tenantId}/checkout`)
+      alert("นำผู้ใช้ออกจากห้องพักเรียบร้อยแล้ว")
+      fetchTenants()
+    } catch (err) {
+      console.error(err)
+      alert("เกิดข้อผิดพลาดในการดำเนินการ")
+    }
+  }
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -44,7 +61,17 @@ function TenantList() {
             {tenants.map(t => (
               <tr key={t.Tenant_ID}>
                 <td className="border px-2 py-1">{t.Tenant_ID}</td>
-                <td className="border px-2 py-1">{t.firstname}</td>
+                <td className="border px-2 py-1">
+                  {t.firstname}
+                  {t.current_room_id && (
+                    <button
+                      onClick={() => handleCheckout(t.Tenant_ID)}
+                      className="ml-2 bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1 rounded"
+                    >
+                      เอาออก
+                    </button>
+                  )}
+                </td>
                 <td className="border px-2 py-1">{t.lastname}</td>
                 <td className="border px-2 py-1">{t.email}</td>
                 <td className="border px-2 py-1">{t.phone}</td>

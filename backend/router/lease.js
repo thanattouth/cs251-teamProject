@@ -1,5 +1,6 @@
 const express = require('express')
 const pool = require('../config/connection')
+const bcrypt = require('bcrypt')
 const router = express.Router()
 
 // เพิ่มสัญญาเช่าแบบ Walk-in (พร้อมเพิ่มผู้เช่าใหม่)
@@ -13,12 +14,13 @@ router.post('/walkin', async (req, res) => {
   const conn = await pool.getConnection()
   try {
     await conn.beginTransaction()
+    const hashedPassword = await bcrypt.hash(ID_card_number, 10)
 
     // เพิ่มผู้เช่าใหม่
     const [tenantResult] = await conn.query(
       `INSERT INTO Tenant (firstname, lastname, email, phone, ID_card_number, username, password, move_in_date, current_room_id)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [firstname, lastname, email, phone, ID_card_number, username, password, start_date, Room_ID]
+      [firstname, lastname, email, phone, ID_card_number, username, hashedPassword, start_date, Room_ID]
     )
     const Tenant_ID = tenantResult.insertId
 

@@ -136,8 +136,11 @@ router.put('/:id/checkin', async (req, res) => {
     )
 
     await pool.query(
-      'UPDATE Tenant SET current_room_id = ? WHERE Tenant_ID = ?',
-      [booking.Room_ID, booking.Tenant_ID]
+      `UPDATE Tenant 
+      SET current_room_id = ?, 
+          move_in_date = ? 
+      WHERE Tenant_ID = ?`,
+      [booking.Room_ID, new Date(), booking.Tenant_ID]
     )
 
     res.json({ message: 'Check-in completed' })
