@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
-import AdminNavbar from './components/AdminNavbar'
+import AdminSidebarLayout from './components/AdminSidebarLayout' // ✅ layout ที่มี navbar + sidebar
 import Home from './pages/Home'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
@@ -38,41 +38,63 @@ function App() {
               <Navbar isAuthenticated={isAuthenticated} setAuth={setAuth} />
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/signin" element={<PublicRoute> <SignIn setAuth={setAuth} /> </PublicRoute>} />
-                <Route path="/signup" element={<PublicRoute> <SignUp /> </PublicRoute>} />
-                <Route path="/dashboard" element={<ProtectedRoute> <Dashboard /> </ProtectedRoute>} />
-                <Route path="/edit-user" element={<ProtectedRoute> <EditUser setAuth={setAuth} /> </ProtectedRoute>} />
-                <Route path="/booking" element={<ProtectedRoute> <BookRoom /> </ProtectedRoute>} />
+                <Route path="/signin" element={<PublicRoute><SignIn setAuth={setAuth} /></PublicRoute>} />
+                <Route path="/signup" element={<PublicRoute><SignUp /></PublicRoute>} />
+                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/edit-user" element={<ProtectedRoute><EditUser setAuth={setAuth} /></ProtectedRoute>} />
+                <Route path="/booking" element={<ProtectedRoute><BookRoom /></ProtectedRoute>} />
               </Routes>
             </>
           }
         />
 
         {/* Admin Routes */}
+        <Route path="/admin/signin" element={<AdminSignIn setAdminAuth={setAdminAuth} />} />
+
+        {/* Admin Layout Routes - use layout with navbar+sidebar */}
         <Route
-          path="/admin/*"
-          element={
-            <>
-              <AdminNavbar />
-              <Routes>
-                <Route path="signin" element={<AdminSignIn setAdminAuth={setAdminAuth} />} />
-                <Route path="dashboard" element={<AdminProtectedRoute> <AdminDashboard /> </AdminProtectedRoute>} />
-                <Route path="dormitory" element={<AdminProtectedRoute> <Dormitory /> </AdminProtectedRoute>} />
-                <Route path="add-dormitory" element={<AdminProtectedRoute> <AddDormitory /> </AdminProtectedRoute>} />
-                <Route path="rooms" element={<AdminProtectedRoute> <RoomList /> </AdminProtectedRoute>} />
-                <Route
-                  path="dormitory/:Dormitory_ID/rooms"
-                  element={<AdminProtectedRoute> <RoomList /> </AdminProtectedRoute>}
-                />
-                <Route path="employee/add" element={<AdminProtectedRoute> <AddEmployee /> </AdminProtectedRoute>} />
-                <Route path="employee" element={<AdminProtectedRoute> <EmployeeList /> </AdminProtectedRoute>} />
-                <Route path="tenant" element={<AdminProtectedRoute> <TenantList /> </AdminProtectedRoute>} />
-                <Route path="furniture" element={<AdminProtectedRoute> <FurnitureList /> </AdminProtectedRoute>} />
-                <Route path="booking" element={<AdminProtectedRoute> <AdminBookingDashboard /> </AdminProtectedRoute>} />
-                <Route path="lease" element={<AdminProtectedRoute> <AddLease /> </AdminProtectedRoute>} />
-              </Routes>
-            </>
-          }
+          path="/admin/dashboard"
+          element={<AdminProtectedRoute><AdminSidebarLayout><AdminDashboard /></AdminSidebarLayout></AdminProtectedRoute>}
+        />
+        <Route
+          path="/admin/dormitory"
+          element={<AdminProtectedRoute><AdminSidebarLayout><Dormitory /></AdminSidebarLayout></AdminProtectedRoute>}
+        />
+        <Route
+          path="/admin/add-dormitory"
+          element={<AdminProtectedRoute><AdminSidebarLayout><AddDormitory /></AdminSidebarLayout></AdminProtectedRoute>}
+        />
+        <Route
+          path="/admin/rooms"
+          element={<AdminProtectedRoute><AdminSidebarLayout><RoomList /></AdminSidebarLayout></AdminProtectedRoute>}
+        />
+        <Route
+          path="/admin/dormitory/:Dormitory_ID/rooms"
+          element={<AdminProtectedRoute><AdminSidebarLayout><RoomList /></AdminSidebarLayout></AdminProtectedRoute>}
+        />
+        <Route
+          path="/admin/employee/add"
+          element={<AdminProtectedRoute><AdminSidebarLayout><AddEmployee /></AdminSidebarLayout></AdminProtectedRoute>}
+        />
+        <Route
+          path="/admin/employee"
+          element={<AdminProtectedRoute><AdminSidebarLayout><EmployeeList /></AdminSidebarLayout></AdminProtectedRoute>}
+        />
+        <Route
+          path="/admin/tenant"
+          element={<AdminProtectedRoute><AdminSidebarLayout><TenantList /></AdminSidebarLayout></AdminProtectedRoute>}
+        />
+        <Route
+          path="/admin/furniture"
+          element={<AdminProtectedRoute><AdminSidebarLayout><FurnitureList /></AdminSidebarLayout></AdminProtectedRoute>}
+        />
+        <Route
+          path="/admin/booking"
+          element={<AdminProtectedRoute><AdminSidebarLayout><AdminBookingDashboard /></AdminSidebarLayout></AdminProtectedRoute>}
+        />
+        <Route
+          path="/admin/lease"
+          element={<AdminProtectedRoute><AdminSidebarLayout><AddLease /></AdminSidebarLayout></AdminProtectedRoute>}
         />
       </Routes>
     </Router>

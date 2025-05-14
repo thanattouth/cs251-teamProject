@@ -19,8 +19,8 @@ function BookRoom() {
 
   const handleSubmit = async e => {
     e.preventDefault()
+    const user = JSON.parse(localStorage.getItem('user'))
     try {
-      const user = JSON.parse(localStorage.getItem('user'))
       await axios.post('http://localhost:5000/api/booking', {
         ...form,
         Tenant_ID: user?.Tenant_ID,
@@ -33,30 +33,78 @@ function BookRoom() {
   }
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white rounded shadow">
-      <h2 className="text-2xl font-bold mb-4">จองห้องพัก</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block mb-1">เลือกห้องว่าง</label>
-          <select name="Room_ID" value={form.Room_ID} onChange={handleChange} required className="border p-2 w-full">
-            <option value="">-- เลือกห้อง --</option>
-            {rooms.map(room => (
-              <option key={room.Room_ID} value={room.Room_ID}>
-                {room.Room_ID} ({room.room_type_id})
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="block mb-1">วันที่เริ่มเข้าพัก</label>
-          <input type="date" name="check_in_date" value={form.check_in_date} onChange={handleChange} required className="border p-2 w-full" />
-        </div>
-        <div>
-          <label className="block mb-1">วันที่สิ้นสุดสัญญา</label>
-          <input type="date" name="check_out_date" value={form.check_out_date} onChange={handleChange} required className="border p-2 w-full" />
-        </div>
-        <button type="submit" className="bg-black text-white px-4 py-2 rounded">จอง</button>
-      </form>
+    <div className="relative min-h-screen pt-28 pb-16 px-4 overflow-hidden">
+      <div
+        className="absolute inset-0 bg-cover bg-center z-0"
+        style={{ backgroundImage: 'url("/hero-bg2.jpg")' }}
+      ></div>
+
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/100 to-white/25"></div>
+
+      <div className="relative z-10 max-w-3xl mx-auto bg-white shadow-xl rounded-2xl p-10">
+        <h1 className="text-4xl font-bold text-center text-blue-700 mb-10">
+          🏨 จองห้องพัก
+        </h1>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* ห้องว่าง */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              เลือกห้องว่าง
+            </label>
+            <select
+              name="Room_ID"
+              value={form.Room_ID}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded-xl px-4 py-2"
+            >
+              <option value="">-- เลือกห้อง --</option>
+              {rooms.map(room => (
+                <option key={room.Room_ID} value={room.Room_ID}>
+                  {room.Room_ID} ({room.room_type_id})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* วันที่ */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">วันที่เริ่มเข้าพัก</label>
+              <input
+                type="date"
+                name="check_in_date"
+                value={form.check_in_date}
+                onChange={handleChange}
+                required
+                className="w-full border border-gray-300 rounded-xl px-4 py-2"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">วันที่สิ้นสุดสัญญา</label>
+              <input
+                type="date"
+                name="check_out_date"
+                value={form.check_out_date}
+                onChange={handleChange}
+                required
+                className="w-full border border-gray-300 rounded-xl px-4 py-2"
+              />
+            </div>
+          </div>
+
+          {/* ปุ่ม */}
+          <div className="text-center pt-4">
+            <button
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold shadow-lg"
+            >
+              ส่งคำขอจอง
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   )
 }
