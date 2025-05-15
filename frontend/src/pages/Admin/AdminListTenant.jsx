@@ -36,7 +36,7 @@ function TenantList() {
   }
 
   return (
-    <div className="p-8 max-w-6xl mx-auto bg-white rounded-2xl shadow-md">
+    <div className="p-8 max-w-7xl mx-auto bg-white rounded-2xl shadow-md">
       <h2 className="text-3xl font-semibold text-gray-800 mb-6">รายชื่อผู้เช่าทั้งหมด</h2>
 
       {loading ? (

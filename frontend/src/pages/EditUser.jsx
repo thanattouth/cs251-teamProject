@@ -11,7 +11,6 @@ const EditUser = ({ setAuth }) => {
   const [isEditing, setIsEditing] = useState(false)
 
   useEffect(() => {
-    // Fetch user data from the backend
     const fetchUserData = async () => {
       try {
         const response = await axios.get('http://localhost:5000/api/user', {
@@ -33,12 +32,12 @@ const EditUser = ({ setAuth }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const response = await axios.put('http://localhost:5000/api/user', userData, {
+      await axios.put('http://localhost:5000/api/user', userData, {
         headers: { 'x-auth-token': localStorage.getItem('token') },
       })
-      alert('User information updated successfully!')
 
-      // Update localStorage and Navbar state
+      alert('อัปเดตข้อมูลผู้ใช้สำเร็จ!')
+
       const updatedUser = {
         ...JSON.parse(localStorage.getItem('user')),
         First_Name: userData.firstname,
@@ -47,86 +46,64 @@ const EditUser = ({ setAuth }) => {
         Phone: userData.phone,
       }
       localStorage.setItem('user', JSON.stringify(updatedUser))
-      setAuth(true) // Trigger Navbar to re-render with updated user data
-
+      setAuth(true)
       setIsEditing(false)
     } catch (error) {
       console.error('Error updating user data:', error)
-      alert('Failed to update user information.')
+      alert('ไม่สามารถอัปเดตข้อมูลได้')
     }
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-gray-900">User Information</h2>
+    <div className="flex mt-20 items-center justify-center px-4 py-12">
+      <div className="w-full max-w-xl bg-white rounded-2xl shadow-lg p-8 space-y-6">
+        <h2 className="text-3xl font-bold text-center text-gray-800">ข้อมูลผู้ใช้</h2>
+
         {!isEditing ? (
-          <div>
-            <p><strong>First Name:</strong> {userData.firstname}</p>
-            <p><strong>Last Name:</strong> {userData.lastname}</p>
-            <p><strong>Email:</strong> {userData.email}</p>
-            <p><strong>Phone:</strong> {userData.phone}</p>
+          <div className="space-y-3 text-gray-700 text-sm">
+            <p><span className="font-medium">ชื่อ:</span> {userData.firstname}</p>
+            <p><span className="font-medium">นามสกุล:</span> {userData.lastname}</p>
+            <p><span className="font-medium">อีเมล:</span> {userData.email}</p>
+            <p><span className="font-medium">เบอร์โทร:</span> {userData.phone}</p>
             <button
               onClick={() => setIsEditing(true)}
-              className="mt-4 w-full bg-black text-white py-2 px-4 rounded-md hover:bg-gray-900"
+              className="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
             >
-              Edit Information
+              แก้ไขข้อมูล
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label className="block text-gray-700">First Name</label>
-              <input
-                type="text"
-                name="firstname"
-                value={userData.firstname}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Last Name</label>
-              <input
-                type="text"
-                name="lastname"
-                value={userData.lastname}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={userData.email}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Phone</label>
-              <input
-                type="text"
-                name="phone"
-                value={userData.phone}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
+          <form onSubmit={handleSubmit} className="space-y-4 text-sm">
+            {[
+              { label: 'ชื่อ', name: 'firstname' },
+              { label: 'นามสกุล', name: 'lastname' },
+              { label: 'อีเมล', name: 'email', type: 'email' },
+              { label: 'เบอร์โทร', name: 'phone' },
+            ].map(({ label, name, type = 'text' }) => (
+              <div key={name}>
+                <label className="block mb-1 text-gray-600">{label}</label>
+                <input
+                  type={type}
+                  name={name}
+                  value={userData[name]}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  required
+                />
+              </div>
+            ))}
             <button
               type="submit"
-              className="w-full bg-black text-white py-2 px-4 rounded-md hover:bg-gray-900"
+              className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
             >
-              Save Changes
+              บันทึกข้อมูล
             </button>
             <button
               type="button"
               onClick={() => setIsEditing(false)}
-              className="mt-2 w-full bg-gray-300 text-black py-2 px-4 rounded-md hover:bg-gray-400"
+              className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition"
             >
-              Cancel
+              ยกเลิก
             </button>
           </form>
         )}

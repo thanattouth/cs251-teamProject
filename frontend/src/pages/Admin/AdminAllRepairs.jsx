@@ -114,8 +114,8 @@ const AllRepairsAdmin = () => {
   <div className="max-w-7xl mx-auto p-6 bg-white rounded-xl shadow">
     <h2 className="text-3xl font-semibold text-gray-800 mb-6">รายการแจ้งซ่อมทั้งหมด</h2>
 
-    <RepairTable title="📌 คำร้องที่ยังไม่เสร็จ" data={inProgressRepairs} />
-    <RepairTable title="✅ คำร้องที่เสร็จแล้ว" data={completedRepairs} />
+    <RepairTable title="คำร้องที่ยังไม่เสร็จ" data={inProgressRepairs} />
+    <RepairTable title="คำร้องที่เสร็จแล้ว" data={completedRepairs} />
   </div>
 )
 }

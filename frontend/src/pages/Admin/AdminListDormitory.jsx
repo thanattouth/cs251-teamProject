@@ -20,7 +20,7 @@ const AdminListDormitory = () => {
   }
 
   return (
-    <div className="p-8 max-w-4xl mx-auto bg-white rounded-2xl shadow-md">
+    <div className="p-8 max-w-7xl mx-auto bg-white rounded-2xl shadow-md">
       <h1 className="text-3xl font-semibold text-gray-800 mb-6">จัดการหอพักทั้งหมด</h1>
 
       {/* รายการหอพัก */}

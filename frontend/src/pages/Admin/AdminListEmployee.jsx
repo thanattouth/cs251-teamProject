@@ -69,69 +69,72 @@ function EmployeeList() {
   }
 
   return (
-  <div className="p-6 max-w-7xl mx-auto">
-    <div className="flex justify-between items-center mb-6">
-      <h2 className="text-3xl font-semibold text-gray-800">รายชื่อพนักงาน</h2>
-      <button
-        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl transition"
-        onClick={() => navigate('/admin/employee/add')}
-      >
-        + เพิ่มพนักงาน
-      </button>
-    </div>
+    <div className="p-8 max-w-7xl mx-auto bg-white rounded-2xl shadow-md">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl font-semibold text-gray-800">รายชื่อพนักงาน</h2>
+        <button
+          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl transition"
+          onClick={() => navigate('/admin/employee/add')}
+        >
+          + เพิ่มพนักงาน
+        </button>
+      </div>
 
-    <div className="overflow-x-auto bg-white rounded-xl shadow">
-      <table className="min-w-full divide-y divide-gray-200 text-sm text-left">
-        <thead className="bg-gray-100 text-gray-700">
-          <tr>
-            <th className="px-4 py-2">รหัสพนักงาน</th>
-            <th className="px-4 py-2">รหัสบัตรประชาชน</th>
-            <th className="px-4 py-2">ชื่อ</th>
-            <th className="px-4 py-2">นามสกุล</th>
-            <th className="px-4 py-2">วันที่เริ่มงาน</th>
-            <th className="px-4 py-2">ตำแหน่ง</th>
-            <th className="px-4 py-2">ชั้นที่รับผิดชอบ</th>
-            <th className="px-4 py-2">ทักษะพิเศษ</th>
-            <th className="px-4 py-2">เวลาเข้ากะ</th>
-            <th className="px-4 py-2">ฝ่าย/แผนก</th>
-            <th className="px-4 py-2 text-center">แก้ไข</th>
-          </tr>
-        </thead>
-        <tbody className="text-gray-700">
-          {employees.length === 0 ? (
+      <div className="overflow-x-auto rounded-xl border border-gray-200">
+        <table className="min-w-full text-sm text-gray-700">
+          <thead className="bg-gray-50 text-gray-600 text-xs uppercase">
             <tr>
-              <td colSpan={11} className="text-center px-4 py-6 text-gray-500">ไม่พบข้อมูลพนักงาน</td>
+              <th className="px-4 py-3">รหัสพนักงาน</th>
+              <th className="px-4 py-3">รหัสบัตรประชาชน</th>
+              <th className="px-4 py-3">ชื่อ</th>
+              <th className="px-4 py-3">นามสกุล</th>
+              <th className="px-4 py-3">วันที่เริ่มงาน</th>
+              <th className="px-4 py-3">ตำแหน่ง</th>
+              <th className="px-4 py-3">ชั้นที่รับผิดชอบ</th>
+              <th className="px-4 py-3">ทักษะพิเศษ</th>
+              <th className="px-4 py-3">เวลาเข้ากะ</th>
+              <th className="px-4 py-3">ฝ่าย/แผนก</th>
+              <th className="px-4 py-3 text-center">แก้ไข</th>
             </tr>
-          ) : (
-            employees.map(emp => (
-              <tr key={emp.Employee_ID} className="hover:bg-gray-50 transition">
-                <td className="px-4 py-2">{emp.Employee_ID}</td>
-                <td className="px-4 py-2">{emp.ID_card_number}</td>
-                <td className="px-4 py-2">{emp.firstname}</td>
-                <td className="px-4 py-2">{emp.lastname}</td>
-                <td className="px-4 py-2">{emp.hire_date?.slice(0, 10)}</td>
-                <td className="px-4 py-2">{emp.position_type}</td>
-                <td className="px-4 py-2">{housekeeperMap[emp.Employee_ID] || '-'}</td>
-                <td className="px-4 py-2">{technicianMap[emp.Employee_ID] || '-'}</td>
-                <td className="px-4 py-2">{guardMap[emp.Employee_ID] || '-'}</td>
-                <td className="px-4 py-2">{managerMap[emp.Employee_ID] || '-'}</td>
-                <td className="px-4 py-2 text-center">
-                  <button
-                    className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded transition"
-                    onClick={() => handleEdit(emp.position_type, emp.Employee_ID,
-                      emp.position_type === 'Housekeeper' ? (housekeeperMap[emp.Employee_ID] || '') :
-                      emp.position_type === 'Technician' ? (technicianMap[emp.Employee_ID] || '') : '', emp)}
-                  >
-                    แก้ไข
-                  </button>
-                </td>
+          </thead>
+          <tbody className="divide-y divide-gray-100 bg-white">
+            {employees.length === 0 ? (
+              <tr>
+                <td colSpan={11} className="text-center px-4 py-6 text-gray-500">ไม่พบข้อมูลพนักงาน</td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-    </div>
+            ) : (
+              employees.map(emp => (
+                <tr key={emp.Employee_ID} className="hover:bg-gray-50">
+                  <td className="px-4 py-3">{emp.Employee_ID}</td>
+                  <td className="px-4 py-3">{emp.ID_card_number}</td>
+                  <td className="px-4 py-3">{emp.firstname}</td>
+                  <td className="px-4 py-3">{emp.lastname}</td>
+                  <td className="px-4 py-3">{emp.hire_date?.slice(0, 10)}</td>
+                  <td className="px-4 py-3">{emp.position_type}</td>
+                  <td className="px-4 py-3">{housekeeperMap[emp.Employee_ID] || '-'}</td>
+                  <td className="px-4 py-3">{technicianMap[emp.Employee_ID] || '-'}</td>
+                  <td className="px-4 py-3">{guardMap[emp.Employee_ID] || '-'}</td>
+                  <td className="px-4 py-3">{managerMap[emp.Employee_ID] || '-'}</td>
+                  <td className="px-4 py-3 text-center">
+                    <button
+                      className="bg-blue-100 hover:bg-blue-200 text-blue-700 text-xs font-medium px-3 py-1 rounded transition"
+                      onClick={() =>
+                        handleEdit(emp.position_type, emp.Employee_ID,
+                          emp.position_type === 'Housekeeper' ? (housekeeperMap[emp.Employee_ID] || '') :
+                          emp.position_type === 'Technician' ? (technicianMap[emp.Employee_ID] || '') : '', emp)
+                      }
+                    >
+                      แก้ไข
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
 
+      {/* Modal edit part is unchanged, still styled similarly */}
     {edit && (
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
         <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md mx-auto">
@@ -211,9 +214,8 @@ function EmployeeList() {
         </div>
       </div>
     )}
-  </div>
-)
-
+    </div>
+  )
 }
 
 export default EmployeeList

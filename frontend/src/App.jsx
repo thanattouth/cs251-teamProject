@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import PublicRoute from './components/PublicRoute'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminProtectedRoute from './components/AdminProtectedRoute'
+import AdminSidebar from './components/AdminSidebar'
 //import User
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
@@ -68,30 +69,31 @@ function App() {
           }
         />
         {/* Admin Routes */}
+        <Route path="/admin/signin" element={<AdminSignIn setAdminAuth={setAdminAuth} />} />
         <Route
           path="/admin/*"
           element={
-            <>
-              <AdminNavbar />
-              <Routes>
-                <Route path="signin" element={<AdminSignIn setAdminAuth={setAdminAuth} />} />
-                <Route path="dashboard" element={<AdminProtectedRoute> <AdminDashboard /> </AdminProtectedRoute>} />
-                <Route path="dormitory" element={<AdminProtectedRoute> <Dormitory /> </AdminProtectedRoute>} />
-                <Route path="add-dormitory" element={<AdminProtectedRoute> <AddDormitory /> </AdminProtectedRoute>} />
-                <Route path="rooms" element={<AdminProtectedRoute> <RoomList /> </AdminProtectedRoute>} />
-                <Route path="dormitory/:Dormitory_ID/rooms" element={<AdminProtectedRoute> <RoomList /> </AdminProtectedRoute>} />
-                <Route path="employee/add" element={<AdminProtectedRoute> <AddEmployee /> </AdminProtectedRoute>} />
-                <Route path="employee" element={<AdminProtectedRoute> <EmployeeList /> </AdminProtectedRoute>} />
-                <Route path="tenant" element={<AdminProtectedRoute> <TenantList /> </AdminProtectedRoute>} />
-                <Route path="furniture" element={<AdminProtectedRoute> <FurnitureList /> </AdminProtectedRoute>} />
-                <Route path="booking" element={<AdminProtectedRoute> <AdminBookingDashboard /> </AdminProtectedRoute>} />
-                <Route path="lease" element={<AdminProtectedRoute> <AddLease /> </AdminProtectedRoute>} />
-                <Route path="repairs" element={<AdminProtectedRoute> <AllRepairsAdmin  /> </AdminProtectedRoute>} />
-                <Route path="repairs/complete/:requestId" element={<AdminProtectedRoute> <CompleteRepairForm /> </AdminProtectedRoute>} />
-                <Route path="bill" element={<AdminProtectedRoute> <AdminBillControl  /> </AdminProtectedRoute>} />
-                <Route path="bill-payment" element={<AdminProtectedRoute> <AdminBillPayment  /> </AdminProtectedRoute>} />
-              </Routes>
-            </>
+            <AdminProtectedRoute>
+              <AdminSidebar>
+                <Routes>
+                  <Route path="dashboard" element={<AdminDashboard />} />
+                  <Route path="dormitory" element={<Dormitory />} />
+                  <Route path="add-dormitory" element={<AddDormitory />} />
+                  <Route path="rooms" element={<RoomList />} />
+                  <Route path="dormitory/:Dormitory_ID/rooms" element={<RoomList />} />
+                  <Route path="employee/add" element={<AddEmployee />} />
+                  <Route path="employee" element={<EmployeeList />} />
+                  <Route path="tenant" element={<TenantList />} />
+                  <Route path="furniture" element={<FurnitureList />} />
+                  <Route path="booking" element={<AdminBookingDashboard />} />
+                  <Route path="lease" element={<AddLease />} />
+                  <Route path="repairs" element={<AllRepairsAdmin />} />
+                  <Route path="repairs/complete/:requestId" element={<CompleteRepairForm />} />
+                  <Route path="bill" element={<AdminBillControl />} />
+                  <Route path="bill-payment" element={<AdminBillPayment />} />
+                </Routes>
+              </AdminSidebar>
+            </AdminProtectedRoute>
           }
         />
       </Routes>

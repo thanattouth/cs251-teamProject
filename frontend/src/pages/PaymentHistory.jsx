@@ -12,31 +12,34 @@ const PaymentHistory = ({ user }) => {
   }, [user])
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow rounded">
-      <h2 className="text-2xl font-bold mb-4">ประวัติการชำระเงิน</h2>
+    <div className="max-w-7xl mx-auto mt-20 p-6 bg-white shadow-lg rounded-xl">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">ประวัติการชำระเงิน</h2>
+
       {payments.length === 0 ? (
-        <p className="text-gray-600">ยังไม่มีการชำระเงิน</p>
+        <p className="text-gray-600 text-center">ยังไม่มีการชำระเงิน</p>
       ) : (
-        <table className="table-auto w-full border">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="p-2">วันที่ชำระ</th>
-              <th className="p-2">ยอดเงิน</th>
-              <th className="p-2">ยอดบิล</th>
-              <th className="p-2">วันครบกำหนด</th>
-            </tr>
-          </thead>
-          <tbody>
-            {payments.map(payment => (
-              <tr key={payment.Payment_ID} className="text-center border-t">
-                <td className="p-2">{new Date(payment.payment_date).toLocaleDateString()}</td>
-                <td className="p-2">฿{payment.amount}</td>
-                <td className="p-2">฿{payment.total_amount}</td>
-                <td className="p-2">{new Date(payment.due_date).toLocaleDateString()}</td>
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+            <thead className="bg-gray-50 text-gray-600 font-semibold">
+              <tr>
+                <th className="px-4 py-3 text-left">วันที่ชำระ</th>
+                <th className="px-4 py-3 text-right">ยอดที่ชำระ</th>
+                <th className="px-4 py-3 text-right">ยอดบิลทั้งหมด</th>
+                <th className="px-4 py-3 text-left">วันครบกำหนด</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="text-gray-800 divide-y divide-gray-100">
+              {payments.map((payment) => (
+                <tr key={payment.Payment_ID} className="hover:bg-gray-50">
+                  <td className="px-4 py-2">{new Date(payment.payment_date).toLocaleDateString()}</td>
+                  <td className="px-4 py-2 text-right">฿{Number(payment.amount).toFixed(2)}</td>
+                  <td className="px-4 py-2 text-right">฿{Number(payment.total_amount).toFixed(2)}</td>
+                  <td className="px-4 py-2">{new Date(payment.due_date).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   )

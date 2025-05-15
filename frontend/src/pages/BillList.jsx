@@ -11,38 +11,52 @@ const BillList = ({ user }) => {
       .catch(err => console.error('Error loading bills:', err))
   }, [user])
 
+  const statusBadge = (status) => {
+    const style = status === 'paid'
+      ? 'bg-green-100 text-green-700'
+      : 'bg-red-100 text-red-700'
+    return (
+      <span className={`px-3 py-1 rounded-full text-xs font-medium ${style}`}>
+        {status === 'paid' ? 'ชำระแล้ว' : 'ยังไม่ชำระ'}
+      </span>
+    )
+  }
+
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow rounded">
-      <h2 className="text-2xl font-bold mb-4">รายการบิลของฉัน</h2>
+    <div className="max-w-7xl mx-auto mt-20 p-6 bg-white shadow-lg rounded-xl">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">รายการบิลของฉัน</h2>
+
       {bills.length === 0 ? (
-        <p className="text-gray-600">ยังไม่มีบิล</p>
+        <p className="text-gray-600 text-center">ยังไม่มีบิล</p>
       ) : (
-        <table className="table-auto w-full border">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="p-2">วันที่ออก</th>
-              <th className="p-2">ค่าเช่า</th>
-              <th className="p-2">ค่าน้ำ</th>
-              <th className="p-2">ค่าไฟ</th>
-              <th className="p-2">ค่าซ่อมบำรุงเดือนนี้</th>
-              <th className="p-2">รวม</th>
-              <th className="p-2">สถานะ</th>
-            </tr>
-          </thead>
-          <tbody>
-            {bills.map(bill => (
-              <tr key={bill.Bill_ID} className="text-center border-t">
-                <td className="p-2">{new Date(bill.Bill_date).toLocaleDateString()}</td>
-                <td className="p-2">฿{bill.rent}</td>
-                <td className="p-2">฿{bill.water_fee}</td>
-                <td className="p-2">฿{bill.electric_fee}</td>
-                <td className="p-2">฿{bill.repair_cost || 0}</td>
-                <td className="p-2">฿{bill.total_amount}</td>
-                <td className={`p-2 ${bill.bill_status === 'paid' ? 'text-green-600' : 'text-red-600'}`}>{bill.bill_status === 'paid' ? 'ชำระแล้ว' : 'ยังไม่ชำระ'}</td>
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+            <thead className="bg-gray-50 text-gray-600 font-semibold">
+              <tr>
+                <th className="px-4 py-3 text-left">วันที่ออก</th>
+                <th className="px-4 py-3 text-right">ค่าเช่า</th>
+                <th className="px-4 py-3 text-right">ค่าน้ำ</th>
+                <th className="px-4 py-3 text-right">ค่าไฟ</th>
+                <th className="px-4 py-3 text-right">ค่าซ่อมบำรุง</th>
+                <th className="px-4 py-3 text-right">รวม</th>
+                <th className="px-4 py-3 text-center">สถานะ</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="text-gray-800 divide-y divide-gray-100">
+              {bills.map((bill) => (
+                <tr key={bill.Bill_ID} className="hover:bg-gray-50">
+                  <td className="px-4 py-2">{new Date(bill.Bill_date).toLocaleDateString()}</td>
+                  <td className="px-4 py-2 text-right">฿{Number(bill.rent).toFixed(2)}</td>
+                  <td className="px-4 py-2 text-right">฿{Number(bill.water_fee).toFixed(2)}</td>
+                  <td className="px-4 py-2 text-right">฿{Number(bill.electric_fee).toFixed(2)}</td>
+                  <td className="px-4 py-2 text-right">฿{Number(bill.repair_cost || 0).toFixed(2)}</td>
+                  <td className="px-4 py-2 text-right font-semibold">฿{Number(bill.total_amount).toFixed(2)}</td>
+                  <td className="px-4 py-2 text-center">{statusBadge(bill.bill_status)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   )

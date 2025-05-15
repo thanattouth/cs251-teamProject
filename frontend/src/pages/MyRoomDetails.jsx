@@ -6,114 +6,143 @@ const MyRoomDetails = ({ user }) => {
   const [dormUtility, setDormUtility] = useState({ water: null, electric: null })
   const [error, setError] = useState(null)
   const [repairs, setRepairs] = useState([])
+  const [notFound, setNotFound] = useState(false)
 
   useEffect(() => {
     if (!user?.Tenant_ID) return
 
     axios.get(`http://localhost:5000/api/room/tenant/${user.Tenant_ID}/room-details`)
-      .then(res => setRoomData(res.data))
-      .catch(err => {
-        console.error('Error loading room details:', err)
-        setError('ไม่สามารถโหลดข้อมูลห้องได้')
+      .then(res => {
+        if (!res.data?.room) {
+          setNotFound(true)
+        } else {
+          setRoomData(res.data)
+          const dormId = res.data.room.Dormitory_ID
+          if (dormId) {
+            axios.get(`http://localhost:5000/api/dormitory/${dormId}`)
+              .then(dormRes => {
+                setDormUtility({
+                  water: dormRes.data.Water_bill,
+                  electric: dormRes.data.Electric_bill
+                })
+              })
+          }
+        }
       })
+      .catch(err => {
+        if (err.response?.status === 404) {
+          setNotFound(true)
+        } else {
+          setError('ไม่สามารถโหลดข้อมูลห้องได้')
+        }
+      })
+
     axios.get(`http://localhost:5000/api/repair/user/${user.Tenant_ID}`)
       .then(res => setRepairs(res.data))
-      .catch(err => {
-        console.error('Error loading repair requests:', err)
-      })
-    axios.get(`http://localhost:5000/api/room/tenant/${user.Tenant_ID}/room-details`)
-    .then(res => {
-      setRoomData(res.data)
-      // ดึงค่าน้ำค่าไฟจากหอพัก
-      const dormId = res.data?.room?.Dormitory_ID
-      if (dormId) {
-        axios.get(`http://localhost:5000/api/dormitory/${dormId}`)
-          .then(dormRes => {
-            setDormUtility({
-              water: dormRes.data.Water_bill,
-              electric: dormRes.data.Electric_bill
-            })
-          })
-          .catch(err => console.error('Error loading utility rates:', err))
-      }
-  })
-
   }, [user])
 
   if (error) {
-    return <div className="max-w-6xl mx-auto p-6 bg-white rounded shadow text-red-600">{error}</div>
+    return <div className="max-w-6xl mx-auto p-6 bg-red-50 text-red-600 rounded-xl shadow">{error}</div>
   }
 
-  if (!roomData) {
-    return <div className="max-w-6xl mx-auto p-6 bg-white rounded shadow">กำลังโหลดข้อมูล...</div>
+  if (notFound || roomData === null || !roomData.room) {
+    return (
+      <div className="max-w-xl mx-auto mt-24 p-6 bg-white rounded-xl shadow text-center">
+        <h2 className="text-2xl font-bold text-red-600 mb-4">❌ ไม่พบห้องที่เช่า</h2>
+        <p className="text-gray-600">คุณยังไม่มีห้องพักที่ใช้งานอยู่ในขณะนี้</p>
+      </div>
+    )
   }
 
   const { room, furniture } = roomData
 
-  return (
-    <div className="max-w-6xl mx-auto p-6 bg-white rounded shadow">
-      <h2 className="text-2xl font-bold mb-4">ข้อมูลห้องพักของฉัน</h2>
+  const statusBadge = (status) => {
+    const colors = {
+      completed: 'bg-green-100 text-green-700',
+      pending: 'bg-yellow-100 text-yellow-700',
+      cancelled: 'bg-red-100 text-red-700'
+    }
+    return <span className={`px-3 py-1 rounded-full text-xs font-medium ${colors[status] || 'bg-gray-100 text-gray-600'}`}>{status}</span>
+  }
 
-      <table className="w-full table-auto border mb-6 text-center">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="border px-4 py-2">เลขห้อง</th>
-            <th className="border px-4 py-2">ชั้น</th>
-            <th className="border px-4 py-2">หอพัก</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="border px-4 py-2">{room.Room_ID}</td>
-            <td className="border px-4 py-2">{room.Floor}</td>
-            <td className="border px-4 py-2">{room.dormitory_name}</td>
-          </tr>
-        </tbody>
-      </table>
-      <div className="mb-6 space-y-2 text-gray-700">
-        <p><strong>ค่าเช่ารายเดือน:</strong> {room.Cost} บาท</p>
-        <p><strong>ค่าน้ำหน่วยละ:</strong> {dormUtility.water ?? '-'} บาท</p>
-        <p><strong>ค่าไฟหน่วยละ:</strong> {dormUtility.electric ?? '-'} บาท</p>
+  return (
+    <div className="max-w-7xl mx-auto p-6 space-y-10">
+      <h2 className="text-3xl font-bold text-center text-gray-800">🏠 ข้อมูลห้องพักของฉัน</h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <InfoCard icon="🛏" label="เลขห้อง" value={room.Room_ID} />
+        <InfoCard icon="🏢" label="ชั้น" value={room.Floor} />
+        <InfoCard icon="📍" label="หอพัก" value={room.dormitory_name} />
       </div>
-      <h3 className="text-lg font-semibold mb-2">รายการเฟอร์นิเจอร์ในห้อง</h3>
-      {furniture.length > 0 ? (
-        <ul className="list-disc pl-6 text-gray-700">
-          {furniture.map((item, idx) => (
-            <li key={idx}>
-              {item.furniture_name} จำนวน {item.quantity}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-gray-600">ไม่มีรายการเฟอร์นิเจอร์</p>
-      )}
-      <h3 className="text-lg font-semibold mt-8 mb-2">คำร้องแจ้งซ่อมของห้องนี้</h3>
-      {repairs.length > 0 ? (
-        <table className="w-full table-auto border text-sm">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="border px-2 py-1">วันที่แจ้ง</th>
-              <th className="border px-2 py-1">รายละเอียด</th>
-              <th className="border px-2 py-1">สถานะ</th>
-              <th className="border px-2 py-1">วันที่ซ่อม</th>
-            </tr>
-          </thead>
-          <tbody>
-            {repairs.map((r, idx) => (
-              <tr key={idx}>
-                <td className="border px-2 py-1">{r.Request_date?.split('T')[0]}</td>
-                <td className="border px-2 py-1">{r.Description}</td>
-                <td className="border px-2 py-1">{r.Status}</td>
-                <td className="border px-2 py-1">{r.maintenance_date?.split('T')[0] || '-'}</td>
-              </tr>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <CostCard icon="💸" label="ค่าเช่ารายเดือน" value={`${room.Cost} บาท`} />
+        <CostCard icon="💧" label="ค่าน้ำต่อหน่วย" value={`${dormUtility.water ?? '-'} บาท`} />
+        <CostCard icon="⚡" label="ค่าไฟต่อหน่วย" value={`${dormUtility.electric ?? '-'} บาท`} />
+      </div>
+
+      <div className="bg-white p-6 rounded-xl shadow">
+        <h3 className="text-xl font-semibold mb-4">🪑 เฟอร์นิเจอร์ในห้อง</h3>
+        {furniture.length > 0 ? (
+          <ul className="list-disc pl-6 text-gray-700 space-y-1">
+            {furniture.map((item, i) => (
+              <li key={i}>{item.furniture_name} จำนวน {item.quantity}</li>
             ))}
-          </tbody>
-        </table>
-      ) : (
-        <p className="text-gray-600">ยังไม่มีคำร้องแจ้งซ่อมสำหรับห้องนี้</p>
-      )}
+          </ul>
+        ) : (
+          <p className="text-gray-500">ไม่มีรายการเฟอร์นิเจอร์</p>
+        )}
+      </div>
+
+      <div className="bg-white p-6 rounded-xl shadow">
+        <h3 className="text-xl font-semibold mb-4">🛠 รายการแจ้งซ่อม</h3>
+        {repairs.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm rounded-lg border border-gray-200">
+              <thead className="bg-gray-50 text-gray-700 font-semibold">
+                <tr>
+                  <th className="px-4 py-3 text-left">วันที่แจ้ง</th>
+                  <th className="px-4 py-3 text-left">รายละเอียด</th>
+                  <th className="px-4 py-3 text-left">สถานะ</th>
+                  <th className="px-4 py-3 text-left">วันที่ซ่อม</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 text-gray-700">
+                {repairs.map((r, i) => (
+                  <tr key={i} className="hover:bg-gray-50">
+                    <td className="px-4 py-2">{r.Request_date?.split('T')[0]}</td>
+                    <td className="px-4 py-2">{r.Description}</td>
+                    <td className="px-4 py-2">{statusBadge(r.Status)}</td>
+                    <td className="px-4 py-2">{r.maintenance_date?.split('T')[0] || '-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-gray-500">ยังไม่มีคำร้องแจ้งซ่อม</p>
+        )}
+      </div>
     </div>
   )
 }
+
+const InfoCard = ({ icon, label, value }) => (
+  <div className="bg-white p-5 rounded-xl shadow text-center space-y-1">
+    <div className="text-3xl">{icon}</div>
+    <div className="text-lg font-semibold text-gray-700">{value}</div>
+    <div className="text-sm text-gray-500">{label}</div>
+  </div>
+)
+
+const CostCard = ({ icon, label, value }) => (
+  <div className="bg-white p-5 rounded-xl shadow flex items-center space-x-4">
+    <div className="text-2xl">{icon}</div>
+    <div>
+      <div className="text-sm text-gray-500">{label}</div>
+      <div className="text-lg font-semibold text-gray-700">{value}</div>
+    </div>
+  </div>
+)
 
 export default MyRoomDetails

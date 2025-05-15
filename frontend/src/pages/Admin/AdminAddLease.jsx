@@ -38,7 +38,7 @@ const WalkInForm = () => {
   }
 
   return (
-    <div className="p-8 max-w-4xl mx-auto bg-white rounded-2xl shadow-lg">
+    <div className="p-8 max-w-7xl mx-auto bg-white rounded-2xl shadow-lg">
       <h2 className="text-3xl font-semibold text-gray-800 mb-6">เพิ่มสัญญาเช่า (Walk-in)</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
 

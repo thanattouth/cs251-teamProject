@@ -140,7 +140,7 @@ function AdminBookingDashboard() {
   )
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white rounded-2xl shadow-lg space-y-10">
+    <div className="max-w-7xl mx-auto p-6 bg-white rounded-2xl shadow-lg space-y-10">
       <h2 className="text-3xl font-bold text-gray-800 mb-4">การจองห้อง (ฺBooking)</h2>
 
       <section>

@@ -50,16 +50,12 @@ setupDatabase()
         console.error('Error setting up database:', error)
     })
 
-//Routes 
 app.use('/api/auth',authRoutes)
 app.use('/api/user', userRoutes)
-
-// Admin routes
 app.use('/api/admin', adminRoutes)
 app.use('/api/dormitory', dormitoryRoutes)
 app.use('/api/employee', employeeRoutes)
 app.use('/api/tenant', tenantRoutes)
-
 app.use('/api/room-types', roomTypeRouter)
 app.use('/api/booking', bookingRoutes)
 app.use('/api', furnitureRoutes)

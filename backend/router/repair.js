@@ -5,14 +5,13 @@ const router = express.Router()
 
 // ผู้ใช้แจ้งซ่อม (ต้องมีห้องพัก)
 router.post('/request', async (req, res) => {
-  const { tenantId, description } = req.body
+  const { tenantId, description, maintenanceDate } = req.body
 
   try {
     const [[tenant]] = await pool.query(
       'SELECT current_room_id FROM Tenant WHERE Tenant_ID = ?',
       [tenantId]
     )
-
     if (!tenant || !tenant.current_room_id) {
       return res.status(403).json({ error: 'คุณไม่มีห้องพัก ไม่สามารถแจ้งซ่อมได้' })
     }
@@ -20,17 +19,28 @@ router.post('/request', async (req, res) => {
     const roomId = tenant.current_room_id
     const requestDate = new Date()
 
-    await pool.query(
+    // สร้าง Repair_Request
+    const [repairResult] = await pool.query(
       `INSERT INTO Repair_Request (Tenant_ID, Room_ID, Request_date, Description)
        VALUES (?, ?, ?, ?)`,
       [tenantId, roomId, requestDate, description]
     )
 
-    res.status(201).json({ message: 'แจ้งซ่อมเรียบร้อยแล้ว' })
+    const requestId = repairResult.insertId
+
+    // สร้าง Maintenance พร้อมวันที่ที่ผู้ใช้เลือก
+    await pool.query(
+      `INSERT INTO Maintenance (Room_ID, Request_ID, maintenance_date)
+       VALUES (?, ?, ?)`,
+      [roomId, requestId, maintenanceDate]
+    )
+
+    res.status(201).json({ message: 'แจ้งซ่อมพร้อมระบุวันเรียบร้อยแล้ว' })
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
 })
+
 
 // PUT /repair/accept/:id
 router.put('/accept/:requestId', async (req, res) => {
@@ -51,30 +61,44 @@ router.put('/accept/:requestId', async (req, res) => {
       [requestId]
     )
 
-    // เพิ่ม record ใน Maintenance (เบื้องต้น ยังไม่เสร็จ)
-    await pool.query(
-      `INSERT INTO Maintenance (Employee_ID, Room_ID, Request_ID, cost, maintenance_date, description)
-       VALUES (?, ?, ?, 0, NULL, NULL)`,
-      [employeeId, request.Room_ID, requestId]
+    // เช็กว่ามี Maintenance อยู่แล้วหรือยัง
+    const [[existingMaintenance]] = await pool.query(
+      `SELECT Maintenance_ID FROM Maintenance WHERE Request_ID = ?`,
+      [requestId]
     )
 
-    res.json({ message: 'รับเรื่องสำเร็จ และบันทึกช่างเรียบร้อยแล้ว' })
+    if (existingMaintenance) {
+      // มีอยู่แล้ว → อัปเดตช่างซ่อม
+      await pool.query(
+        `UPDATE Maintenance SET Employee_ID = ? WHERE Request_ID = ?`,
+        [employeeId, requestId]
+      )
+    } else {
+      // ยังไม่มี → เพิ่มใหม่
+      await pool.query(
+        `INSERT INTO Maintenance (Employee_ID, Room_ID, Request_ID, cost, maintenance_date, description)
+         VALUES (?, ?, ?, 0, NULL, NULL)`,
+        [employeeId, request.Room_ID, requestId]
+      )
+    }
+
+    res.json({ message: 'รับเรื่องสำเร็จ และอัปเดตช่างเรียบร้อยแล้ว' })
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
 })
 
 
+
 router.post('/complete', async (req, res) => {
   const { requestId, cost, description } = req.body
-  const maintenanceDate = new Date()
 
   try {
     const [result] = await pool.query(
       `UPDATE Maintenance 
-       SET cost = ?, maintenance_date = ?, description = ?
+       SET cost = ?, description = ?
        WHERE Request_ID = ?`,
-      [cost, maintenanceDate, description, requestId]
+      [cost, description, requestId]
     )
 
     if (result.affectedRows === 0) {
@@ -91,6 +115,7 @@ router.post('/complete', async (req, res) => {
     res.status(500).json({ error: err.message })
   }
 })
+
 
 // GET /repair/user/:tenantId
 router.get('/user/:tenantId', async (req, res) => {
